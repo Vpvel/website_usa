@@ -4,12 +4,14 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { HomeContent } from "@/domain/entities/home-content";
-import type { ShopProduct } from "@/domain/entities/shop-product";
+import type { ShopCatalog, ShopProduct } from "@/domain/entities/shop-product";
 import { useHomeViewModel } from "@/presentation/viewmodels/useHomeViewModel";
 import { useCart } from "@/presentation/context/CartContext";
+import { useWishlist } from "@/presentation/context/WishlistContext";
 import { SiteHeader } from "@/presentation/components/layout/SiteHeader";
 import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
 import { RevealOnScroll } from "@/presentation/components/RevealOnScroll";
+import { ShopBannerSlider } from "@/presentation/components/shop/ShopBannerSlider";
 
 function formatUsd(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -18,16 +20,80 @@ function formatUsd(value: number) {
   }).format(value);
 }
 
+function CategoryProductCard({
+  product,
+  addedId,
+  onAdd,
+  delay,
+}: {
+  product: ShopProduct;
+  addedId: string | null;
+  onAdd: (product: ShopProduct) => void;
+  delay: number;
+}) {
+  const { has, toggle } = useWishlist();
+  const wished = has(product.id);
+  const isAdded = addedId === product.id;
+
+  return (
+    <article
+      id={product.id}
+      className="shop-cat-card reveal"
+      data-reveal
+      data-reveal-delay={String(delay)}
+    >
+      <div className="shop-cat-card__media">
+        <Image
+          src={product.imageSrc}
+          alt={product.shortName}
+          fill
+          sizes="(max-width: 768px) 50vw, 20vw"
+        />
+        <button
+          type="button"
+          className={`wish-btn${wished ? " is-active" : ""}`}
+          aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
+          aria-pressed={wished}
+          onClick={() => toggle(product)}
+        >
+          <span className="material-symbols-outlined" aria-hidden="true">
+            {wished ? "favorite" : "favorite_border"}
+          </span>
+        </button>
+      </div>
+      <h3>{product.shortName}</h3>
+      <p className="shop-cat-card__price">{formatUsd(product.pricePerKg)}/kg</p>
+      <div className="shop-cat-card__actions">
+        <button
+          type="button"
+          className={`btn btn--primary shop-cat-card__cta${isAdded ? " is-added" : ""}`}
+          onClick={() => onAdd(product)}
+        >
+          {isAdded ? "Added" : "Add to cart"}
+        </button>
+      </div>
+    </article>
+  );
+}
+
 export function ShopPageView({
   site,
-  products,
+  catalog,
 }: {
   site: HomeContent;
-  products: ShopProduct[];
+  catalog: ShopCatalog;
 }) {
   const vm = useHomeViewModel(site);
   const { addItem, itemCount } = useCart();
+  const { count: wishCount } = useWishlist();
   const [addedId, setAddedId] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  function handleAdd(product: ShopProduct) {
+    addItem(product, product.minOrderKg);
+    setAddedId(product.id);
+    window.setTimeout(() => setAddedId(null), 1600);
+  }
 
   return (
     <>
@@ -43,65 +109,109 @@ export function ShopPageView({
         closeDropdown={vm.closeDropdown}
         toggleDropdown={vm.toggleDropdown}
       />
-      <main className="shop-page">
-        <section className="shop-hero reveal" data-reveal>
-          <p className="shop-hero__eyebrow">Angel Starch Shop</p>
-          <h1>Bakery Products Modified Starch</h1>
-          <p>
-            Industrial starch shop for bakery formulators — modified starches,
-            CWS systems, and instant jam mixes. Add to cart by kg, then request
-            a quote for US supply.
-          </p>
-          <div className="shop-hero__actions">
-            <Link href="/shop/cart" className="btn btn--primary">
-              View cart ({itemCount} kg)
-            </Link>
-          </div>
-        </section>
+      <main className="shop-shell">
+        <ShopBannerSlider />
 
-        <section className="shop-grid" aria-label="Starch products">
-          {products.map((product, index) => (
-            <article
-              key={product.id}
-              id={product.id}
-              className="shop-card reveal"
-              data-reveal
-              data-reveal-delay={String((index % 4) * 80)}
+        <div className="shop-page">
+          <section className="shop-toolbar reveal" data-reveal>
+            <div>
+              <p className="shop-hero__eyebrow">Angel Starch Shop</p>
+              <h1>Shop starch & food ingredients</h1>
+              <p>
+                Browse categories, add to cart by kg, save favorites, and
+                complete local address checkout.
+              </p>
+            </div>
+            <div className="shop-hero__actions">
+              <Link href="/shop/cart" className="btn btn--primary">
+                View cart ({itemCount} kg)
+              </Link>
+              <Link href="/shop/wishlist" className="btn btn--ghost">
+                Wishlist ({wishCount})
+              </Link>
+              <Link href="/shop/orders" className="btn btn--ghost">
+                Order history
+              </Link>
+            </div>
+          </section>
+
+          <nav className="shop-category-nav" aria-label="Shop categories">
+            {catalog.categories.map((category, index) => (
+              <a
+                key={category.id}
+                href={`#${category.id}`}
+                className="reveal"
+                data-reveal
+                data-reveal-delay={String(80 + index * 60)}
+              >
+                {category.title}
+              </a>
+            ))}
+          </nav>
+
+        {catalog.categories.map((category, categoryIndex) => {
+          const isExpanded = Boolean(expanded[category.id]);
+          const description = isExpanded
+            ? category.description
+            : category.description.length > 160
+              ? `${category.description.slice(0, 160).trim()}…`
+              : category.description;
+
+          return (
+            <section
+              key={category.id}
+              id={category.id}
+              className="shop-category"
+              aria-labelledby={`${category.id}-title`}
             >
-              <div className="shop-card__media">
-                <Image
-                  src={product.imageSrc}
-                  alt={product.shortName}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 33vw"
-                />
-              </div>
-              <div className="shop-card__body">
-                <h2>{product.shortName}</h2>
-                <p className="shop-card__name">{product.name}</p>
-                <p className="shop-card__summary">{product.summary}</p>
-                <div className="shop-card__meta">
-                  <strong>{formatUsd(product.pricePerKg)}/kg</strong>
-                  <span>MOQ {product.minOrderKg} kg</span>
-                  <span>{product.packaging}</span>
-                </div>
-                <div className="shop-card__actions">
+              <header
+                className="shop-category__header reveal"
+                data-reveal
+                data-reveal-delay={String(categoryIndex * 40)}
+              >
+                <h2 id={`${category.id}-title`}>{category.title}</h2>
+                <p>{description}</p>
+                {category.description.length > 160 ? (
                   <button
                     type="button"
-                    className="btn btn--primary"
-                    onClick={() => {
-                      addItem(product, product.minOrderKg);
-                      setAddedId(product.id);
-                      window.setTimeout(() => setAddedId(null), 1600);
-                    }}
+                    className="shop-category__more"
+                    onClick={() =>
+                      setExpanded((current) => ({
+                        ...current,
+                        [category.id]: !current[category.id],
+                      }))
+                    }
                   >
-                    {addedId === product.id ? "Added to cart" : "Add to cart"}
+                    {isExpanded ? "View less" : "View More"}
                   </button>
-                </div>
+                ) : null}
+              </header>
+
+              <div className="shop-category__grid">
+                {category.products.map((product, index) => (
+                  <CategoryProductCard
+                    key={product.id}
+                    product={product}
+                    addedId={addedId}
+                    onAdd={handleAdd}
+                    delay={80 + index * 95}
+                  />
+                ))}
               </div>
-            </article>
-          ))}
-        </section>
+
+              <div
+                className="shop-category__footer reveal"
+                data-reveal
+                data-reveal-delay="280"
+              >
+                <Link href="/contact#sample" className="btn btn--ghost">
+                  View more details
+                </Link>
+              </div>
+            </section>
+          );
+        })}
+      </div>
       </main>
       <SiteFooter
         brandName={vm.brandName}

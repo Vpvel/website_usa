@@ -1,3 +1,10 @@
+export type ShopCategoryId =
+  | "bakery-modified-starch"
+  | "potato-starch"
+  | "tapioca-starch"
+  | "food-additive"
+  | "food-ingredients";
+
 export interface ShopProduct {
   id: string;
   name: string;
@@ -7,8 +14,19 @@ export interface ShopProduct {
   currency: "USD";
   minOrderKg: number;
   packaging: string;
-  category: "bakery-modified-starch";
+  category: ShopCategoryId;
   imageSrc: string;
   href: string;
   sourceUrl: string;
+}
+
+export interface ShopCategory {
+  id: ShopCategoryId;
+  title: string;
+  description: string;
+  products: ShopProduct[];
+}
+
+export interface ShopCatalog {
+  categories: ShopCategory[];
 }

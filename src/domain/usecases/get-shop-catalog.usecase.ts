@@ -1,10 +1,10 @@
-import type { ShopProduct } from "../entities/shop-product";
+import type { ShopCatalog } from "../entities/shop-product";
 import type { ShopRepository } from "../repositories/shop.repository";
 
 export class GetShopCatalogUseCase {
   constructor(private readonly repository: ShopRepository) {}
 
-  execute(): Promise<ShopProduct[]> {
+  execute(): Promise<ShopCatalog> {
     return this.repository.getCatalog();
   }
 }

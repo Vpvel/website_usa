@@ -6,24 +6,24 @@ import {
 import { ShopPageView } from "@/presentation/components/shop/ShopPageView";
 
 export const metadata: Metadata = {
-  title: "Starch Shop | Bakery Modified Starch | Angel Starch",
+  title: "Starch Shop | Potato, Tapioca & Food Ingredients | Angel Starch",
   description:
-    "Shop bakery modified starch products including StaThick, FlaMas, FruJix, corn starch 7M, and instant jam mixes. Add to cart and request a US supply quote.",
+    "Shop Angel Starch potato starch, tapioca starch, food additives, and food ingredients. Add to cart and request a US supply quote.",
   keywords: [
-    "bakery modified starch",
-    "StaThick PS",
-    "FlaMas MS-CWS",
-    "FruJix",
-    "corn starch 7M",
+    "potato starch",
+    "tapioca starch",
+    "food additives",
+    "food ingredients",
     "Angel Starch shop",
+    "cassava flour",
   ],
 };
 
 export default async function ShopPage() {
-  const [site, products] = await Promise.all([
+  const [site, catalog] = await Promise.all([
     getHomeContentUseCase.execute(),
     getShopCatalogUseCase.execute(),
   ]);
 
-  return <ShopPageView site={site} products={products} />;
+  return <ShopPageView site={site} catalog={catalog} />;
 }

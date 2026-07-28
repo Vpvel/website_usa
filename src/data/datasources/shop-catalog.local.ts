@@ -1,189 +1,318 @@
-import type { ShopProduct } from "@/domain/entities/shop-product";
+import type { ShopCatalog, ShopProduct } from "@/domain/entities/shop-product";
 
-const SOURCE =
-  "https://www.indiamart.com/angelfoodstarch/bakery-products-modified-starch.html";
+const SOURCE = "https://www.indiamart.com/angelfoodstarch/";
 
-const packImage = "/images/product_starch/cassavaflourbag.webp";
+const img = {
+  potato: "/images/product_starch/PotatoProteinIsolate.webp",
+  sweetPotato: "/images/product_starch/8f2a6eb2-7454-4db1-a202-1a1d5c815168.webp",
+  cassava: "/images/product_starch/cassavaflourbag.webp",
+  cassavaAlt: "/images/product_starch/cassava_flour_pack.webp",
+  corn: "/images/product_starch/cornmaltodextrinpack.webp",
+  tapioca: "/images/product_starch/tapiocamaltodextrinpack_a27d5209-720e-4f33-95e9-fd063bb9ffaf.webp",
+};
 
-export const shopCatalogLocal: ShopProduct[] = [
-  {
-    id: "stathick-ps-e1414",
+function product(
+  partial: Omit<ShopProduct, "currency" | "minOrderKg" | "packaging" | "href" | "sourceUrl"> &
+    Partial<Pick<ShopProduct, "minOrderKg" | "packaging" | "sourceUrl">>,
+): ShopProduct {
+  return {
+    currency: "USD",
+    minOrderKg: 25,
+    packaging: "25 kg bags",
+    sourceUrl: SOURCE,
+    ...partial,
+    href: `/shop#${partial.id}`,
+  };
+}
+
+const bakeryProducts: ShopProduct[] = [
+  product({
+    id: "bakery-stathick-ps-e1414",
     name: "Modified Starch E1414 Acetylated Distarch Phosphate Potato Starch – StaThick PS",
     shortName: "StaThick PS (E1414)",
     summary:
-      "Chemically modified potato starch for bakery, sauces, and gluten-free systems. Thickener, stabilizer, and binder with strong water-holding capacity.",
+      "Acetylated distarch phosphate potato starch for bakery thickening, binding, and water holding.",
     pricePerKg: 1.65,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25 kg moisture-proof paper bags",
     category: "bakery-modified-starch",
-    imageSrc: "/images/product_starch/8f2a6eb2-7454-4db1-a202-1a1d5c815168.webp",
-    href: "/shop#stathick-ps-e1414",
-    sourceUrl: `${SOURCE}#2856771805162`,
-  },
-  {
-    id: "corn-starch-7m",
+    imageSrc: img.sweetPotato,
+    packaging: "25 kg moisture-proof paper bags",
+  }),
+  product({
+    id: "bakery-corn-starch-7m",
     name: "Corn Starch 7M for Bakery, Dairy, Confectionery and Beverage Products",
     shortName: "Corn Starch 7M",
     summary:
-      "Plant-based, non-GMO fine corn starch for coatings, thickening, baking, confectionery, and beverage applications.",
+      "Plant-based corn starch for bakery, dairy, confectionery, and beverage applications.",
     pricePerKg: 0.85,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25/50 kg PP bags with moisture-proof liner",
     category: "bakery-modified-starch",
-    imageSrc: "/images/product_starch/cornmaltodextrinpack.webp",
-    href: "/shop#corn-starch-7m",
-    sourceUrl: SOURCE,
-  },
-  {
-    id: "frujix",
+    imageSrc: img.corn,
+    packaging: "25/50 kg PP bags with moisture-proof liner",
+  }),
+  product({
+    id: "bakery-frujix",
     name: "Physically Modified Starch FruJix",
     shortName: "FruJix",
     summary:
-      "Clean-label instant thickener and stabilizer for fruit/vegetable juices, concentrates, smoothies, purees, and nectars.",
+      "Clean-label instant thickener and stabilizer for fruit juices, purees, and bakery fillings.",
     pricePerKg: 2.05,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25 kg bags",
     category: "bakery-modified-starch",
-    imageSrc: "/images/product_starch/tapiocamaltodextrinpack_a27d5209-720e-4f33-95e9-fd063bb9ffaf.webp",
-    href: "/shop#frujix",
-    sourceUrl: SOURCE,
-  },
-  {
-    id: "flamas-ms-cws-e1422",
-    name: "Modified Starch E1422 Acetylated Distarch Adipate CWS Maize Starch – FlaMas MS-CWS",
+    imageSrc: img.tapioca,
+  }),
+  product({
+    id: "bakery-flamas-ms-cws-e1422",
+    name: "Modified Starch E1422 Acetylated Distarch Adipate Cold Water Soluble Maize Starch – FlaMas MS-CWS",
     shortName: "FlaMas MS-CWS (E1422)",
     summary:
-      "Cold-water soluble pregelatinized maize starch for sauces, ketchup, yogurt, and bakery as thickener, binder, and emulsifier.",
+      "Cold-water soluble maize starch for sauces, bakery fillings, yogurt, and emulsified systems.",
     pricePerKg: 2.15,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25 kg moisture-proof paper bags",
     category: "bakery-modified-starch",
-    imageSrc: packImage,
-    href: "/shop#flamas-ms-cws-e1422",
-    sourceUrl: SOURCE,
-  },
-  {
-    id: "flamas-ps-cws-e1422",
-    name: "Food Grade FLAMAS PS CWS E1422 (Acetylated Distarch Adipate)",
+    imageSrc: img.cassava,
+    packaging: "25 kg moisture-proof paper bags",
+  }),
+  product({
+    id: "bakery-flamas-ps-cws-e1422",
+    name: "Modified Starch Food Grade FLAMAS PS CWS E1422 (Acetylated Distarch Adipate)",
     shortName: "FLAMAS PS CWS (E1422)",
     summary:
-      "Potato-based pregelatinized E1422 starch with heat/shear/acid tolerance for sauces, baby foods, yogurt, fruit fillings, and baking.",
+      "Food-grade potato-based E1422 CWS starch with heat, shear, and acid tolerance for bakery systems.",
     pricePerKg: 2.05,
-    currency: "USD",
-    minOrderKg: 25,
+    category: "bakery-modified-starch",
+    imageSrc: img.potato,
     packaging: "25/50 kg PP bags with moisture-proof liner",
-    category: "bakery-modified-starch",
-    imageSrc: "/images/product_starch/PotatoProteinIsolate.webp",
-    href: "/shop#flamas-ps-cws-e1422",
-    sourceUrl: SOURCE,
-  },
-  {
-    id: "stathick-ms-cws-e1414",
-    name: "Modified Starch E1414 Acetylated Distarch Phosphate CWS Maize Starch – StaThick MS-CWS",
-    shortName: "StaThick MS-CWS (E1414)",
-    summary:
-      "Cold-water soluble maize starch for bakery and process-stable thickening in sauces and fillings.",
-    pricePerKg: 1.45,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25 kg bags",
-    category: "bakery-modified-starch",
-    imageSrc: "/images/product_starch/cornmaltodextrinpack.webp",
-    href: "/shop#stathick-ms-cws-e1414",
-    sourceUrl: SOURCE,
-  },
-  {
-    id: "resistant-e1412-waxy-maize",
-    name: "Modified Resistant Starch E1412 Distarch Phosphate Waxy Maize Starch",
-    shortName: "Resistant Starch E1412",
-    summary:
-      "Distarch phosphate waxy maize starch for resistant-starch functionality in bakery and specialty formulations.",
-    pricePerKg: 1.2,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25 kg bags",
-    category: "bakery-modified-starch",
-    imageSrc: packImage,
-    href: "/shop#resistant-e1412-waxy-maize",
-    sourceUrl: SOURCE,
-  },
-  {
+  }),
+];
+
+const potatoProducts: ShopProduct[] = [
+  product({
+    id: "e1442-waxy-maize-cws",
+    name: "Modified E-1442 Hydroxypropyl Distarch Phosphate Waxy Maize Starch Cold Water Soluble",
+    shortName: "E-1442 Waxy Maize CWS",
+    summary: "Cold-water soluble hydroxypropyl distarch phosphate for freeze-thaw stability.",
+    pricePerKg: 2.4,
+    category: "potato-starch",
+    imageSrc: img.potato,
+  }),
+  product({
+    id: "e1422-potato-cws",
+    name: "Modified E 1422 - Acetylated Distarch Adipate Potato Starch Cold Water Soluble",
+    shortName: "E1422 Potato CWS",
+    summary: "Pregelatinized potato starch with heat, shear, and acid tolerance.",
+    pricePerKg: 2.05,
+    category: "potato-starch",
+    imageSrc: img.sweetPotato,
+  }),
+  product({
+    id: "e1422-waxy-maize",
+    name: "Modified E 1422 - Acetylated Distarch Adipate Waxy Maize Starch",
+    shortName: "E1422 Waxy Maize",
+    summary: "Process-tolerant acetylated distarch adipate for sauces and bakery systems.",
+    pricePerKg: 2.15,
+    category: "potato-starch",
+    imageSrc: img.corn,
+  }),
+  product({
+    id: "stathick-ps-e1414",
+    name: "Modified Starch E1414 Acetylated Distarch Phosphate Potato Starch – StaThick PS",
+    shortName: "StaThick PS (E1414)",
+    summary: "Potato starch thickener, stabilizer, and binder with strong water holding.",
+    pricePerKg: 1.65,
+    category: "potato-starch",
+    imageSrc: img.sweetPotato,
+  }),
+  product({
     id: "e1450-potato-cws",
     name: "Modified E1450 Starch Sodium Octenyl Succinate Potato Starch CWS",
     shortName: "E1450 Potato CWS",
-    summary:
-      "Cold-water soluble OSA potato starch for emulsification and texture in bakery and specialty systems.",
+    summary: "OSA potato starch for emulsification and specialty texture systems.",
     pricePerKg: 2.1,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25 kg bags",
-    category: "bakery-modified-starch",
-    imageSrc: "/images/product_starch/8f2a6eb2-7454-4db1-a202-1a1d5c815168.webp",
-    href: "/shop#e1450-potato-cws",
-    sourceUrl: SOURCE,
-  },
-  {
-    id: "e1442-waxy-maize",
-    name: "Modified E1442 Hydroxypropyl Distarch Phosphate Waxy Maize Starch",
-    shortName: "E1442 Waxy Maize",
-    summary:
-      "Hydroxypropyl distarch phosphate for freeze-thaw stability and process tolerance in bakery applications.",
-    pricePerKg: 2.4,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25 kg bags",
-    category: "bakery-modified-starch",
-    imageSrc: "/images/product_starch/cornmaltodextrinpack.webp",
-    href: "/shop#e1442-waxy-maize",
-    sourceUrl: SOURCE,
-  },
-  {
-    id: "e1400-brown-dextrin",
-    name: "Modified E1400 Brown Dextrin Waxy Maize Starch",
-    shortName: "E1400 Brown Dextrin",
-    summary:
-      "Brown dextrin waxy maize starch for binding, coating, and specialty bakery functionality.",
-    pricePerKg: 2.15,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25 kg bags",
-    category: "bakery-modified-starch",
-    imageSrc: packImage,
-    href: "/shop#e1400-brown-dextrin",
-    sourceUrl: SOURCE,
-  },
-  {
-    id: "instant-mixed-fruit-jam-mix",
-    name: "Instant Mixed Fruit Jam Mix",
-    shortName: "Instant Mixed Fruit Jam Mix",
-    summary:
-      "Ready instant jam mix for bakery fillings and confectionery applications.",
-    pricePerKg: 4.2,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25 kg bags",
-    category: "bakery-modified-starch",
-    imageSrc: "/images/product_starch/tapiocamaltodextrinpack_a27d5209-720e-4f33-95e9-fd063bb9ffaf.webp",
-    href: "/shop#instant-mixed-fruit-jam-mix",
-    sourceUrl: SOURCE,
-  },
-  {
-    id: "instant-apple-jam-mix",
-    name: "Instant Apple Jam Mix",
-    shortName: "Instant Apple Jam Mix",
-    summary:
-      "Instant apple jam mix for bakery fillings, spreads, and ready dessert systems.",
-    pricePerKg: 3.0,
-    currency: "USD",
-    minOrderKg: 25,
-    packaging: "25 kg bags",
-    category: "bakery-modified-starch",
-    imageSrc: "/images/product_starch/PotatoProteinIsolate.webp",
-    href: "/shop#instant-apple-jam-mix",
-    sourceUrl: SOURCE,
-  },
+    category: "potato-starch",
+    imageSrc: img.potato,
+  }),
 ];
+
+const tapiocaProducts: ShopProduct[] = [
+  product({
+    id: "tapioca-high-viscosity",
+    name: "Tapioca Starch with High Viscosity",
+    shortName: "Tapioca Starch HV",
+    summary: "High-viscosity tapioca starch for clean texture and body in food systems.",
+    pricePerKg: 1.35,
+    category: "tapioca-starch",
+    imageSrc: img.tapioca,
+  }),
+  product({
+    id: "tapioca-high-viscosity-premium",
+    name: "Tapioca Starch with High Viscosity – Premium Grade",
+    shortName: "Tapioca Starch HV Premium",
+    summary: "Premium high-viscosity tapioca starch for demanding bakery and sauce lines.",
+    pricePerKg: 1.55,
+    category: "tapioca-starch",
+    imageSrc: img.cassava,
+  }),
+  product({
+    id: "e1442-tapioca",
+    name: "Modified E-1442 Hydroxypropyl Distarch Phosphate Tapioca Starch",
+    shortName: "E-1442 Tapioca",
+    summary: "Hydroxypropyl distarch phosphate tapioca starch for process stability.",
+    pricePerKg: 2.25,
+    category: "tapioca-starch",
+    imageSrc: img.tapioca,
+  }),
+  product({
+    id: "tapioca-native",
+    name: "Tapioca Starch – Native",
+    shortName: "Native Tapioca Starch",
+    summary: "Native tapioca starch for clean-label thickening and binding.",
+    pricePerKg: 1.1,
+    category: "tapioca-starch",
+    imageSrc: img.cassavaAlt,
+  }),
+  product({
+    id: "tapioca-maltodextrin-de16-20",
+    name: "Enzymatically Modified Starch Maltodextrin Tapioca Starch Dextrose Equivalent 16 to 20",
+    shortName: "Tapioca Maltodextrin DE 16–20",
+    summary: "Enzymatically modified tapioca maltodextrin for solubility and mouthfeel.",
+    pricePerKg: 1.85,
+    category: "tapioca-starch",
+    imageSrc: img.tapioca,
+  }),
+];
+
+const additiveProducts: ShopProduct[] = [
+  product({
+    id: "corn-syrup-solids-de26-30",
+    name: "Corn Syrup Solids (DE-26-30)",
+    shortName: "Corn Syrup Solids DE 26–30",
+    summary: "Dried corn syrup solids for sweetness, body, and browning control.",
+    pricePerKg: 1.75,
+    category: "food-additive",
+    imageSrc: img.corn,
+  }),
+  product({
+    id: "yeast-protein-powder-90",
+    name: "Yeast Protein Powder 90%",
+    shortName: "Yeast Protein Powder 90%",
+    summary: "High-protein yeast powder for nutrition and savory systems.",
+    pricePerKg: 4.8,
+    category: "food-additive",
+    imageSrc: img.potato,
+  }),
+  product({
+    id: "tapioca-syrup-de60",
+    name: "Tapioca Syrup (DE-60)",
+    shortName: "Tapioca Syrup DE 60",
+    summary: "Higher DE tapioca syrup for sweetness and clean fermentable solids.",
+    pricePerKg: 1.95,
+    category: "food-additive",
+    imageSrc: img.tapioca,
+  }),
+  product({
+    id: "brown-rice-syrup",
+    name: "Brown Rice Syrup",
+    shortName: "Brown Rice Syrup",
+    summary: "Natural brown rice syrup sweetener for clean-label formulations.",
+    pricePerKg: 2.2,
+    category: "food-additive",
+    imageSrc: img.cassava,
+  }),
+  product({
+    id: "tapioca-syrup-de30",
+    name: "Tapioca Syrup (DE-30) – Liquid Glucose and Natural Sweetener",
+    shortName: "Tapioca Syrup DE 30",
+    summary: "Lower DE tapioca syrup / liquid glucose for mild sweetness and body.",
+    pricePerKg: 1.9,
+    category: "food-additive",
+    imageSrc: img.cassavaAlt,
+  }),
+];
+
+const ingredientProducts: ShopProduct[] = [
+  product({
+    id: "organic-cassava-flour-mv",
+    name: "Organic Cassava Flour MV",
+    shortName: "Organic Cassava Flour MV",
+    summary: "Organic cassava flour for gluten-free bakery and clean-label applications.",
+    pricePerKg: 2.35,
+    category: "food-ingredients",
+    imageSrc: img.cassava,
+  }),
+  product({
+    id: "boiled-potato-ingredient",
+    name: "Food Ingredient for Boiled Potatoes",
+    shortName: "Boiled Potato Ingredient",
+    summary: "Allergen-free plant-based ingredient system for potato applications.",
+    pricePerKg: 2.55,
+    category: "food-ingredients",
+    imageSrc: img.sweetPotato,
+  }),
+  product({
+    id: "maize-maltodextrin-de9-15",
+    name: "Maize Malto Dextrin with Dextrose Equivalent 9 to 15",
+    shortName: "Maize Maltodextrin DE 9–15",
+    summary: "Maize maltodextrin for bulking, solubility, and controlled sweetness.",
+    pricePerKg: 1.45,
+    category: "food-ingredients",
+    imageSrc: img.corn,
+  }),
+  product({
+    id: "angel-tomato-powder",
+    name: "Angel Tomato Powder",
+    shortName: "Angel Tomato Powder",
+    summary: "Tomato powder for sauces, seasonings, and savory ready meals.",
+    pricePerKg: 3.6,
+    category: "food-ingredients",
+    imageSrc: img.potato,
+  }),
+  product({
+    id: "angel-pea-protein",
+    name: "Angel Pea Protein",
+    shortName: "Angel Pea Protein",
+    summary: "Plant protein for meat alternatives, bakery fortification, and nutrition.",
+    pricePerKg: 5.2,
+    category: "food-ingredients",
+    imageSrc: img.cassavaAlt,
+  }),
+];
+
+export const shopCatalogLocal: ShopCatalog = {
+  categories: [
+    {
+      id: "bakery-modified-starch",
+      title: "Bakery Products Modified Starch",
+      description:
+        "We are Industry pioneers of Modified Starch E1414 Acetylated Distarch Phosphate Potato Starch – StaThick PS, Corn Starch 7M for Bakery, Dairy, Confectionery and Beverage Products, Physically Modified Starch FruJix, Modified Starch E1422 Acetylated Distarch Adipate Cold Water Soluble Maize Starch FlaMas MS-CWS, and Food Grade FLAMAS PS CWS E1422 from India.",
+      products: bakeryProducts,
+    },
+    {
+      id: "potato-starch",
+      title: "Potato Starch",
+      description:
+        "Leading manufacturer of modified potato and process-tolerant starches including E-1422 CWS, E-1442 systems, StaThick PS, and specialty thickeners for bakery, sauces, and gluten-free lines.",
+      products: potatoProducts,
+    },
+    {
+      id: "tapioca-starch",
+      title: "Tapioca Starch",
+      description:
+        "We are a leading manufacturer of tapioca starch with high viscosity, modified E-1442 hydroxypropyl distarch phosphate tapioca starch, native tapioca starch, and enzymatically modified maltodextrin (DE 16–20).",
+      products: tapiocaProducts,
+    },
+    {
+      id: "food-additive",
+      title: "Food Additive",
+      description:
+        "Our range includes Corn Syrup Solids (DE 26–30), Yeast Protein Powder 90%, Tapioca Syrup (DE 60), Brown Rice Syrup, and Tapioca Syrup (DE 30) liquid glucose as a natural sweetener.",
+      products: additiveProducts,
+    },
+    {
+      id: "food-ingredients",
+      title: "Food Ingredients",
+      description:
+        "We are a leading manufacturer of Organic Cassava Flour MV, boiled-potato food ingredients, maize maltodextrin (DE 9–15), Angel Tomato Powder, and Angel Pea Protein.",
+      products: ingredientProducts,
+    },
+  ],
+};
+
+export const shopProductsFlat: ShopProduct[] =
+  shopCatalogLocal.categories.flatMap((category) => category.products);

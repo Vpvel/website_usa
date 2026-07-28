@@ -7,8 +7,8 @@ export function SiteFooter({
   tagline,
   navigation,
 }: Pick<HomeContent, "brandName" | "tagline" | "navigation">) {
-  const columns = navigation.filter((item) =>
-    ["products", "applications", "resources", "about"].includes(item.id),
+  const quickLinks = navigation.filter((item) =>
+    ["products", "applications", "about", "contact"].includes(item.id),
   );
 
   return (
@@ -18,49 +18,40 @@ export function SiteFooter({
           <Image
             src="/images/logo/angel-starch-logo.webp"
             alt={brandName}
-            width={160}
-            height={50}
+            width={120}
+            height={38}
+            className="site-footer__logo"
           />
           <p>{tagline}</p>
         </div>
 
-        <div className="site-footer__columns">
-          {columns.map((column) => (
-            <div key={column.id}>
-              <h3>{column.label}</h3>
-              <ul>
-                {(column.children ?? [column]).map((link) => (
-                  <li key={link.id}>
-                    <Link href={link.href}>{link.label}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <nav className="site-footer__nav" aria-label="Footer">
+          {quickLinks.map((link) => (
+            <Link key={link.id} href={link.href}>
+              {link.label}
+            </Link>
           ))}
-          <div>
-            <h3>Contact Us</h3>
-            <ul>
-              <li>Angel Starch & Food Inc.</li>
-              <li>1250 Commerce Drive, Suite 400</li>
-              <li>Chicago, IL 60601, USA</li>
-              <li>
-                <a href="tel:+13125550148">+1 (312) 555-0148</a>
-              </li>
-              <li>
-                <a href="mailto:usa@angelstarch.com">usa@angelstarch.com</a>
-              </li>
-              <li>
-                <Link href="/contact">Contact form</Link>
-              </li>
-            </ul>
-          </div>
+          <Link href="/shop">Shop</Link>
+        </nav>
+
+        <div className="site-footer__contact">
+          <p className="site-footer__contact-label">USA Office</p>
+          <p>1250 Commerce Dr, Suite 400 · Chicago, IL 60601</p>
+          <p>
+            <a href="tel:+13125550148">+1 (312) 555-0148</a>
+            <span aria-hidden="true"> · </span>
+            <a href="mailto:usa@angelstarch.com">usa@angelstarch.com</a>
+          </p>
         </div>
       </div>
+
       <div className="site-footer__bottom">
-        <p>© {new Date().getFullYear()} {brandName}. All rights reserved.</p>
-        <div>
-          <Link href="/privacy">Privacy Policy</Link>
-          <Link href="/terms">Terms & Conditions</Link>
+        <div className="site-footer__bottom-inner">
+          <p>© {new Date().getFullYear()} {brandName}</p>
+          <div>
+            <Link href="/privacy">Privacy Policy</Link>
+            <Link href="/terms">Terms</Link>
+          </div>
         </div>
       </div>
     </footer>

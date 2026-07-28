@@ -34,7 +34,7 @@ export function RevealOnScroll() {
           observer.unobserve(el);
         }
       },
-      { threshold: 0.18 },
+      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
     );
 
     nodes.forEach((el) => {

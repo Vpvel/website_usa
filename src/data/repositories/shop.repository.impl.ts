@@ -1,13 +1,16 @@
-import type { ShopProduct } from "@/domain/entities/shop-product";
+import type { ShopCatalog, ShopProduct } from "@/domain/entities/shop-product";
 import type { ShopRepository } from "@/domain/repositories/shop.repository";
-import { shopCatalogLocal } from "@/data/datasources/shop-catalog.local";
+import {
+  shopCatalogLocal,
+  shopProductsFlat,
+} from "@/data/datasources/shop-catalog.local";
 
 export class ShopRepositoryImpl implements ShopRepository {
-  async getCatalog(): Promise<ShopProduct[]> {
+  async getCatalog(): Promise<ShopCatalog> {
     return shopCatalogLocal;
   }
 
   async getById(id: string): Promise<ShopProduct | null> {
-    return shopCatalogLocal.find((item) => item.id === id) ?? null;
+    return shopProductsFlat.find((item) => item.id === id) ?? null;
   }
 }

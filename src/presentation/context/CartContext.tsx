@@ -10,8 +10,9 @@ import {
 } from "react";
 import type { CartItem } from "@/domain/entities/cart";
 import type { ShopProduct } from "@/domain/entities/shop-product";
+import { useAuth } from "@/presentation/context/AuthContext";
 
-const CART_STORAGE_KEY = "angel-starch-shop-cart-v1";
+const CART_PREFIX = "angel-starch-shop-cart-v1";
 
 interface CartContextValue {
   items: CartItem[];
@@ -25,10 +26,18 @@ interface CartContextValue {
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-function readStoredCart(): CartItem[] {
+function cartKey(userId: string | null) {
+  return `${CART_PREFIX}:${userId ?? "guest"}`;
+}
+
+function readStoredCart(userId: string | null): CartItem[] {
   if (typeof window === "undefined") return [];
   try {
-    const raw = window.localStorage.getItem(CART_STORAGE_KEY);
+    const key = cartKey(userId);
+    let raw = window.localStorage.getItem(key);
+    if (!raw && !userId) {
+      raw = window.localStorage.getItem(CART_PREFIX);
+    }
     if (!raw) return [];
     const parsed = JSON.parse(raw) as CartItem[];
     return Array.isArray(parsed) ? parsed : [];
@@ -38,18 +47,21 @@ function readStoredCart(): CartItem[] {
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
+  const { user, hydrated: authHydrated } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const userId = user?.id ?? null;
 
   useEffect(() => {
-    setItems(readStoredCart());
+    if (!authHydrated) return;
+    setItems(readStoredCart(userId));
     setHydrated(true);
-  }, []);
+  }, [authHydrated, userId]);
 
   useEffect(() => {
-    if (!hydrated) return;
-    window.localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(items));
-  }, [items, hydrated]);
+    if (!hydrated || !authHydrated) return;
+    window.localStorage.setItem(cartKey(userId), JSON.stringify(items));
+  }, [items, hydrated, authHydrated, userId]);
 
   const value = useMemo<CartContextValue>(() => {
     const itemCount = items.reduce((sum, item) => sum + item.quantityKg, 0);
