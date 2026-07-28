@@ -166,15 +166,20 @@ export const homeContentLocal: HomeContent = {
     { id: "delivery", value: "100%", label: "On-time delivery" },
   ],
   whyPartner: {
-    headline: "Why partner with us?",
-    points: [
-      "Clean-label starches aligned to US food manufacturing needs",
-      "Technical support from formulation through scale-up",
-      "Documentation your QA and regulatory teams can trust",
-      "Reliable US distribution with responsive lead times",
+    headline: "A partner invested in your success",
+    body: [
+      "Angel Starch & Food Inc. helps US manufacturers create better foods with ingredients that perform—and a team that shows up.",
+      "From sample to scale-up, we bring global expertise with local responsiveness, clear documentation, and application support you can count on.",
     ],
-    ctaLabel: "Partner with us",
-    ctaHref: "/contact",
+    points: [
+      "US technical sales and application support",
+      "COA, spec sheets, and QA documentation",
+      "Clean label, organic, and functional portfolio",
+      "Global sourcing with local responsiveness",
+    ],
+    experienceValue: "36+",
+    ctaLabel: "Our story",
+    ctaHref: "/about",
   },
   favorites: {
     headline: "Organic & functional favorites",

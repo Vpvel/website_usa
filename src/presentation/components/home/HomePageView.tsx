@@ -35,8 +35,8 @@ export function HomePageView({ content }: { content: HomeContent }) {
           trustFeatures={vm.trustFeatures}
         />
         <ApplicationsSection applications={vm.applications} />
-        <StatsSection stats={vm.stats} />
         <WhyPartnerSection whyPartner={vm.whyPartner} />
+        <StatsSection stats={vm.stats} />
         <FavoritesSection favorites={vm.favorites} />
       </main>
       <SiteFooter

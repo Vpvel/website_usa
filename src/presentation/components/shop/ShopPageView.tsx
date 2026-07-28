@@ -56,14 +56,6 @@ export function ShopPageView({
             <Link href="/shop/cart" className="btn btn--primary">
               View cart ({itemCount} kg)
             </Link>
-            <a
-              href="https://www.indiamart.com/angelfoodstarch/bakery-products-modified-starch.html"
-              className="btn btn--ghost"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Source catalog reference
-            </a>
           </div>
         </section>
 
@@ -105,9 +97,6 @@ export function ShopPageView({
                   >
                     {addedId === product.id ? "Added to cart" : "Add to cart"}
                   </button>
-                  <Link href="/shop/cart" className="btn btn--outline-green">
-                    Go to cart
-                  </Link>
                 </div>
               </div>
             </article>

@@ -26,6 +26,15 @@ export interface FavoritesSectionContent {
   items: FavoriteProduct[];
 }
 
+export interface WhyPartnerContent {
+  headline: string;
+  body: string[];
+  points: string[];
+  experienceValue: string;
+  ctaLabel: string;
+  ctaHref: string;
+}
+
 export interface HomeContent {
   brandName: string;
   tagline: string;
@@ -35,11 +44,6 @@ export interface HomeContent {
   applications: ApplicationArea[];
   products: Product[];
   stats: StatItem[];
-  whyPartner: {
-    headline: string;
-    points: string[];
-    ctaLabel: string;
-    ctaHref: string;
-  };
+  whyPartner: WhyPartnerContent;
   favorites: FavoritesSectionContent;
 }

@@ -7,31 +7,55 @@ export function WhyPartnerSection({
   whyPartner: HomeContent["whyPartner"];
 }) {
   return (
-    <section className="section why-partner">
-      <div className="why-partner__panel">
-        <h2 className="reveal" data-reveal data-reveal-delay="0">
-          {whyPartner.headline}
-        </h2>
-        <ul>
-          {whyPartner.points.map((point, index) => (
-            <li
-              key={point}
+    <section className="section why-partner" aria-labelledby="why-partner-heading">
+      <div className="why-partner__layout">
+        <div className="why-partner__visual reveal" data-reveal>
+          <span className="why-partner__leaf" aria-hidden="true">
+            <span className="material-symbols-outlined">spa</span>
+          </span>
+          <div className="why-partner__badge" aria-label={`${whyPartner.experienceValue} years of experience`}>
+            <span>{whyPartner.experienceValue}</span>
+          </div>
+        </div>
+
+        <div className="why-partner__content">
+          <h2 id="why-partner-heading" className="reveal" data-reveal>
+            {whyPartner.headline}
+          </h2>
+          {whyPartner.body.map((paragraph, index) => (
+            <p
+              key={paragraph}
               className="reveal"
               data-reveal
-              data-reveal-delay={String(120 + index * 120)}
+              data-reveal-delay={String(80 + index * 80)}
             >
-              {point}
-            </li>
+              {paragraph}
+            </p>
           ))}
-        </ul>
-        <Link
-          href={whyPartner.ctaHref}
-          className="btn btn--primary btn--lg reveal"
-          data-reveal
-          data-reveal-delay="720"
-        >
-          {whyPartner.ctaLabel}
-        </Link>
+          <ul>
+            {whyPartner.points.map((point, index) => (
+              <li
+                key={point}
+                className="reveal"
+                data-reveal
+                data-reveal-delay={String(200 + index * 90)}
+              >
+                <span className="material-symbols-outlined" aria-hidden="true">
+                  check
+                </span>
+                <span>{point}</span>
+              </li>
+            ))}
+          </ul>
+          <Link
+            href={whyPartner.ctaHref}
+            className="btn btn--ghost btn--lg reveal"
+            data-reveal
+            data-reveal-delay="620"
+          >
+            {whyPartner.ctaLabel}
+          </Link>
+        </div>
       </div>
     </section>
   );
