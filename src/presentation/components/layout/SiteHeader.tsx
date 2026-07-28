@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { NavItem } from "@/domain/entities/nav-item";
 import type { HomeViewState } from "@/presentation/viewmodels/useHomeViewModel";
 import { useClickOutside } from "@/presentation/viewmodels/useHomeViewModel";
+import { useCart } from "@/presentation/context/CartContext";
 
 export function SiteHeader({
   brandName,
@@ -31,6 +32,7 @@ export function SiteHeader({
 >) {
   const navRef = useRef<HTMLElement>(null);
   const [openMobileSection, setOpenMobileSection] = useState<string | null>(null);
+  const { itemCount } = useCart();
 
   useClickOutside(navRef, closeDropdown, openDropdownId !== null);
 
@@ -66,8 +68,11 @@ export function SiteHeader({
           <Link href="/contact#sample" className="btn btn--primary">
             Request a Sample
           </Link>
-          <Link href="/shop" className="btn btn--ghost">
-            Shop
+          <Link href="/shop" className="btn btn--ghost shop-link">
+            Shop starch
+            {itemCount > 0 ? (
+              <span className="shop-link__badge">{itemCount}</span>
+            ) : null}
           </Link>
           <button
             type="button"
@@ -137,6 +142,12 @@ export function SiteHeader({
               </div>
             );
           })}
+          <Link href="/shop" onClick={closeMobileMenu}>
+            Shop starch{itemCount > 0 ? ` (${itemCount} kg)` : ""}
+          </Link>
+          <Link href="/shop/cart" onClick={closeMobileMenu}>
+            Cart
+          </Link>
           <Link
             href="/contact#sample"
             className="btn btn--primary"

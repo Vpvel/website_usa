@@ -4,6 +4,7 @@ import {
   Fraunces,
   Source_Sans_3,
 } from "next/font/google";
+import { AppProviders } from "@/presentation/providers/AppProviders";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -45,7 +46,9 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
         />
       </head>
-      <body className="min-h-full flex flex-col antialiased">{children}</body>
+      <body className="min-h-full flex flex-col antialiased">
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   );
 }

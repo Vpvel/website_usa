@@ -54,7 +54,7 @@ export const homeContentLocal: HomeContent = {
       ],
     },
     { id: "about", label: "About Us", href: "/about" },
-    { id: "contact", label: "Contact", href: "/contact" },
+    { id: "contact", label: "Contact Us", href: "/contact" },
   ],
   hero: {
     headline: "Formulate with confidence",

@@ -38,10 +38,16 @@ export function SiteFooter({
             </div>
           ))}
           <div>
-            <h3>Contact</h3>
+            <h3>Contact Us</h3>
             <ul>
+              <li>Angel Starch & Food Inc.</li>
+              <li>1250 Commerce Drive, Suite 400</li>
+              <li>Chicago, IL 60601, USA</li>
               <li>
-                <a href="mailto:info@angelstarch.com">info@angelstarch.com</a>
+                <a href="tel:+13125550148">+1 (312) 555-0148</a>
+              </li>
+              <li>
+                <a href="mailto:usa@angelstarch.com">usa@angelstarch.com</a>
               </li>
               <li>
                 <Link href="/contact">Contact form</Link>
