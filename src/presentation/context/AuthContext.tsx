@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import type { AuthSession, StoredUser, UserProfile } from "@/domain/entities/user";
+import { hashPassword } from "@/domain/utils/password";
 
 const USERS_KEY = "angel-starch-users-v1";
 const SESSION_KEY = "angel-starch-session-v1";
@@ -45,11 +46,6 @@ interface AuthContextValue {
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-function hashPassword(password: string) {
-  // Local-only demo hash (not for production auth).
-  return btoa(`angel-starch::${password.trim()}`);
-}
-
 function toProfile(user: StoredUser): UserProfile {
   return {
     id: user.id,
@@ -57,8 +53,25 @@ function toProfile(user: StoredUser): UserProfile {
     email: user.email,
     company: user.company,
     phone: user.phone,
+    role: user.role ?? "customer",
+    isActive: user.isActive ?? true,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
+  };
+}
+
+function normalizeUser(raw: Partial<StoredUser> & { passwordHash: string }): StoredUser {
+  return {
+    id: raw.id ?? `user-${Date.now()}`,
+    name: raw.name ?? "",
+    email: (raw.email ?? "").toLowerCase(),
+    company: raw.company ?? "",
+    phone: raw.phone ?? "",
+    role: raw.role ?? "customer",
+    isActive: raw.isActive ?? true,
+    passwordHash: raw.passwordHash,
+    createdAt: raw.createdAt ?? new Date().toISOString(),
+    updatedAt: raw.updatedAt ?? new Date().toISOString(),
   };
 }
 
@@ -67,8 +80,14 @@ function readUsers(): StoredUser[] {
   try {
     const raw = window.localStorage.getItem(USERS_KEY);
     if (!raw) return [];
-    const parsed = JSON.parse(raw) as StoredUser[];
-    return Array.isArray(parsed) ? parsed : [];
+    const parsed = JSON.parse(raw) as Partial<StoredUser>[];
+    return Array.isArray(parsed)
+      ? parsed
+          .filter((item): item is Partial<StoredUser> & { passwordHash: string } =>
+            Boolean(item && item.passwordHash),
+          )
+          .map(normalizeUser)
+      : [];
   } catch {
     return [];
   }
@@ -146,6 +165,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           email,
           company: input.company?.trim() ?? "",
           phone: input.phone?.trim() ?? "",
+          role: "customer",
+          isActive: true,
           passwordHash: hashPassword(password),
           createdAt: now,
           updatedAt: now,
@@ -167,6 +188,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         if (!match || match.passwordHash !== hashPassword(password)) {
           return { ok: false, error: "Invalid email or password." };
+        }
+        if (!(match.isActive ?? true)) {
+          return { ok: false, error: "This account is inactive." };
         }
 
         const now = new Date().toISOString();

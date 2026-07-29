@@ -1,9 +1,4 @@
-export type ShopCategoryId =
-  | "native-starch"
-  | "organic-products"
-  | "sweetener"
-  | "clean-label-starch"
-  | "modified-starch";
+export type ShopCategoryId = string;
 
 export interface ShopProductSpec {
   property: string;

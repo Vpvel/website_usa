@@ -45,9 +45,9 @@ export const homeContentLocal: HomeContent = {
       label: "Resources",
       href: "/resources",
       children: [
-        { id: "tds", label: "Technical Data Sheets", href: "/resources#tds" },
         { id: "brochures", label: "Product Brochures", href: "/resources#brochures" },
         { id: "certifications", label: "Certifications", href: "/resources#certifications" },
+        { id: "tds", label: "Technical Data Sheets", href: "/resources#tds" },
         { id: "faq", label: "FAQ", href: "/resources#faq" },
         { id: "knowledge", label: "Knowledge Center", href: "/resources#knowledge" },
         { id: "blog", label: "Blog", href: "/resources#blog" },
@@ -66,6 +66,24 @@ export const homeContentLocal: HomeContent = {
     imageAlt: "Fresh ingredients for clean-label food formulation",
     videoSrc: "/video/farmer_to_factory_manfactures.mp4",
   },
+  shopBanners: [
+    {
+      id: "shop-banner-1",
+      imageSrc: "/images/shop_banner/shop_banner_1.png",
+      imageAlt: "Angel Starch Pure Starch Pure Goodness — Organic Cassava Flour",
+      href: "/shop",
+      sortOrder: 0,
+      isPublished: true,
+    },
+    {
+      id: "shop-banner-2",
+      imageSrc: "/images/shop_banner/shop_banner_2.png",
+      imageAlt: "Angel Starch Pure Starch Pure Goodness — Organic Corn Maltodextrin",
+      href: "/shop",
+      sortOrder: 1,
+      isPublished: true,
+    },
+  ],
   trustFeatures: [
     {
       id: "fda",
@@ -189,7 +207,7 @@ export const homeContentLocal: HomeContent = {
       {
         id: "tapioca-starch",
         name: "Tapioca Starch",
-        imageSrc: "/images/product_starch/tapiocamaltodextrinpack_a27d5209-720e-4f33-95e9-fd063bb9ffaf.webp",
+        imageSrc: "/images/product_starch/tapioca_starch.webp",
         imageAlt: "Angel Tapioca Starch pack",
         ctaLabel: "Shop now",
         ctaHref: "/shop/product/tapioca-starch",

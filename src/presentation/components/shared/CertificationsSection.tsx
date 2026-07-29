@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import type { CertificationsContent } from "@/domain/entities/certification";
 
@@ -24,7 +25,8 @@ export function CertificationsSection({
             key={item.id}
             className="cert-card reveal"
             data-reveal
-            data-reveal-delay={String((index % 8) * 50)}
+            data-reveal-delay={String((index % 8) * 70)}
+            style={{ "--cert-i": index } as CSSProperties}
           >
             <span className="cert-card__media">
               <Image
@@ -34,7 +36,6 @@ export function CertificationsSection({
                 sizes="(max-width: 640px) 33vw, 120px"
               />
             </span>
-            <span className="cert-card__name">{item.name}</span>
           </li>
         ))}
       </ul>

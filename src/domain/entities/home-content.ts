@@ -14,6 +14,15 @@ export interface HeroContent {
   videoSrc?: string;
 }
 
+export interface BannerSlide {
+  id: string;
+  imageSrc: string;
+  imageAlt: string;
+  href?: string;
+  sortOrder: number;
+  isPublished: boolean;
+}
+
 export interface StatItem {
   id: string;
   value: string;
@@ -40,6 +49,7 @@ export interface HomeContent {
   tagline: string;
   navigation: NavItem[];
   hero: HeroContent;
+  shopBanners: BannerSlide[];
   trustFeatures: TrustFeature[];
   applications: ApplicationArea[];
   products: Product[];

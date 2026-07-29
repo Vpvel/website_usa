@@ -3,6 +3,7 @@
 import type { HomeContent } from "@/domain/entities/home-content";
 import type { CertificationsContent } from "@/domain/entities/certification";
 import { useHomeViewModel } from "@/presentation/viewmodels/useHomeViewModel";
+import { useDynamicHome } from "@/presentation/context/DynamicContentContext";
 import { SiteHeader } from "@/presentation/components/layout/SiteHeader";
 import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
 import { HeroSection } from "@/presentation/components/home/HeroSection";
@@ -20,7 +21,8 @@ export function HomePageView({
   content: HomeContent;
   certifications: CertificationsContent;
 }) {
-  const vm = useHomeViewModel(content);
+  const dynamicContent = useDynamicHome(content);
+  const vm = useHomeViewModel(dynamicContent);
 
   return (
     <>

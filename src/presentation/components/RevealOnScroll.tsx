@@ -4,9 +4,8 @@ import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 /**
- * Lightweight scroll-reveal:
- * - Elements should include `data-reveal` and `reveal` class
- * - When they enter the viewport, we add `reveal--visible`
+ * Scroll-reveal with staggered professional entrances.
+ * Use `data-reveal` (+ optional data-reveal="left|right|scale") and optional `data-reveal-delay`.
  */
 export function RevealOnScroll() {
   const pathname = usePathname();
@@ -18,7 +17,11 @@ export function RevealOnScroll() {
 
     if (nodes.length === 0) return;
 
-    if (!("IntersectionObserver" in window)) {
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    if (reduceMotion || !("IntersectionObserver" in window)) {
       nodes.forEach((el) => el.classList.add("reveal--visible"));
       return;
     }
@@ -34,11 +37,14 @@ export function RevealOnScroll() {
           observer.unobserve(el);
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
+      { threshold: 0.1, rootMargin: "0px 0px -8% 0px" },
     );
 
-    nodes.forEach((el) => {
+    nodes.forEach((el, index) => {
       el.classList.remove("reveal--visible");
+      if (!el.dataset.revealDelay) {
+        el.style.transitionDelay = `${Math.min(index * 40, 280)}ms`;
+      }
       observer.observe(el);
     });
 

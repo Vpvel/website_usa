@@ -8,6 +8,10 @@ import type { ShopCatalog, ShopProduct } from "@/domain/entities/shop-product";
 import { useHomeViewModel } from "@/presentation/viewmodels/useHomeViewModel";
 import { useCart } from "@/presentation/context/CartContext";
 import { useWishlist } from "@/presentation/context/WishlistContext";
+import {
+  useDynamicCatalog,
+  useDynamicHome,
+} from "@/presentation/context/DynamicContentContext";
 import { SiteHeader } from "@/presentation/components/layout/SiteHeader";
 import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
 import { RevealOnScroll } from "@/presentation/components/RevealOnScroll";
@@ -83,12 +87,14 @@ function CategoryProductCard({
 
 export function ShopPageView({
   site,
-  catalog,
+  catalog: catalogSeed,
 }: {
   site: HomeContent;
   catalog: ShopCatalog;
 }) {
-  const vm = useHomeViewModel(site);
+  const siteContent = useDynamicHome(site);
+  const catalog = useDynamicCatalog(catalogSeed);
+  const vm = useHomeViewModel(siteContent);
   const { addItem, itemCount, productCount } = useCart();
   const { count: wishCount } = useWishlist();
   const [addedId, setAddedId] = useState<string | null>(null);
@@ -115,7 +121,7 @@ export function ShopPageView({
         toggleDropdown={vm.toggleDropdown}
       />
       <main className="shop-shell">
-        <ShopBannerSlider />
+        <ShopBannerSlider banners={siteContent.shopBanners} />
 
         <div className="shop-page">
           <section className="shop-toolbar reveal" data-reveal>

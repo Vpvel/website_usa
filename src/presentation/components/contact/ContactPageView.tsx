@@ -5,32 +5,102 @@ import Link from "next/link";
 import type { ContactContent } from "@/domain/entities/contact-content";
 import type { HomeContent } from "@/domain/entities/home-content";
 import { useHomeViewModel } from "@/presentation/viewmodels/useHomeViewModel";
+import {
+  useDynamicContact,
+  useDynamicHome,
+} from "@/presentation/context/DynamicContentContext";
 import { SiteHeader } from "@/presentation/components/layout/SiteHeader";
 import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
 import { RevealOnScroll } from "@/presentation/components/RevealOnScroll";
 
 export function ContactPageView({
   site,
-  contact,
+  contact: contactSeed,
 }: {
   site: HomeContent;
   contact: ContactContent;
 }) {
-  const vm = useHomeViewModel(site);
+  const siteContent = useDynamicHome(site);
+  const contact = useDynamicContact(contactSeed);
+  const vm = useHomeViewModel(siteContent);
   const [sampleSent, setSampleSent] = useState(false);
   const [messageSent, setMessageSent] = useState(false);
+  const [sampleError, setSampleError] = useState<string | null>(null);
+  const [messageError, setMessageError] = useState<string | null>(null);
+  const [sampleLoading, setSampleLoading] = useState(false);
+  const [messageLoading, setMessageLoading] = useState(false);
   const usaOffice = contact.offices[0];
 
-  function handleSampleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSampleSent(true);
-    event.currentTarget.reset();
+  async function submitContact(
+    type: "sample" | "general",
+    form: HTMLFormElement,
+  ) {
+    const data = new FormData(form);
+    const payload =
+      type === "sample"
+        ? {
+            type,
+            name: String(data.get("name") ?? ""),
+            company: String(data.get("company") ?? ""),
+            email: String(data.get("email") ?? ""),
+            phone: String(data.get("phone") ?? ""),
+            interest: String(data.get("interest") ?? ""),
+            notes: String(data.get("notes") ?? ""),
+          }
+        : {
+            type,
+            name: String(data.get("name") ?? ""),
+            email: String(data.get("email") ?? ""),
+            message: String(data.get("message") ?? ""),
+          };
+
+    const response = await fetch("/api/contact/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const result = (await response.json()) as {
+      ok?: boolean;
+      error?: string;
+      message?: string;
+    };
+
+    if (!response.ok) {
+      throw new Error(result.error || "Failed to submit form.");
+    }
+
+    form.reset();
+    return result.message;
   }
 
-  function handleMessageSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSampleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setMessageSent(true);
-    event.currentTarget.reset();
+    setSampleError(null);
+    setSampleSent(false);
+    setSampleLoading(true);
+    try {
+      await submitContact("sample", event.currentTarget);
+      setSampleSent(true);
+    } catch (err) {
+      setSampleError(err instanceof Error ? err.message : "Submit failed.");
+    } finally {
+      setSampleLoading(false);
+    }
+  }
+
+  async function handleMessageSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setMessageError(null);
+    setMessageSent(false);
+    setMessageLoading(true);
+    try {
+      await submitContact("general", event.currentTarget);
+      setMessageSent(true);
+    } catch (err) {
+      setMessageError(err instanceof Error ? err.message : "Submit failed.");
+    } finally {
+      setMessageLoading(false);
+    }
   }
 
   return (
@@ -102,14 +172,12 @@ export function ContactPageView({
 
             <div className="contact-map-card">
               <p className="contact-office__eyebrow">USA sample address</p>
-              <h3>{usaOffice.companyLine}</h3>
-              <p>
-                {usaOffice.lines.join(", ")}
-              </p>
+              <h3>{usaOffice?.companyLine}</h3>
+              <p>{usaOffice?.lines.join(", ")}</p>
               <a
                 className="btn btn--ghost"
                 href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                  `${usaOffice.companyLine}, ${usaOffice.lines.join(", ")}`,
+                  `${usaOffice?.companyLine ?? ""}, ${usaOffice?.lines.join(", ") ?? ""}`,
                 )}`}
                 target="_blank"
                 rel="noreferrer"
@@ -128,6 +196,11 @@ export function ContactPageView({
             >
               <h2>{contact.sampleForm.headline}</h2>
               <p>{contact.sampleForm.body}</p>
+              {sampleError ? (
+                <p className="contact-form-card__error" role="alert">
+                  {sampleError}
+                </p>
+              ) : null}
               {sampleSent ? (
                 <p className="contact-form-card__success" role="status">
                   {contact.sampleForm.successMessage}
@@ -141,7 +214,12 @@ export function ContactPageView({
                   </label>
                   <label>
                     Company
-                    <input name="company" type="text" required autoComplete="organization" />
+                    <input
+                      name="company"
+                      type="text"
+                      required
+                      autoComplete="organization"
+                    />
                   </label>
                 </div>
                 <div className="contact-form__row">
@@ -160,10 +238,18 @@ export function ContactPageView({
                 </label>
                 <label>
                   Sample notes
-                  <textarea name="notes" rows={4} placeholder="Volume, process conditions, target texture…" />
+                  <textarea
+                    name="notes"
+                    rows={4}
+                    placeholder="Volume, process conditions, target texture…"
+                  />
                 </label>
-                <button type="submit" className="btn btn--primary">
-                  Submit sample request
+                <button
+                  type="submit"
+                  className="btn btn--primary"
+                  disabled={sampleLoading}
+                >
+                  {sampleLoading ? "Sending…" : "Submit sample request"}
                 </button>
               </form>
             </section>
@@ -175,6 +261,11 @@ export function ContactPageView({
             >
               <h2>{contact.generalForm.headline}</h2>
               <p>{contact.generalForm.body}</p>
+              {messageError ? (
+                <p className="contact-form-card__error" role="alert">
+                  {messageError}
+                </p>
+              ) : null}
               {messageSent ? (
                 <p className="contact-form-card__success" role="status">
                   Message sent. We will get back to you soon.
@@ -195,8 +286,12 @@ export function ContactPageView({
                   Message
                   <textarea name="message" rows={5} required />
                 </label>
-                <button type="submit" className="btn btn--primary">
-                  Send message
+                <button
+                  type="submit"
+                  className="btn btn--primary"
+                  disabled={messageLoading}
+                >
+                  {messageLoading ? "Sending…" : "Send message"}
                 </button>
               </form>
             </section>

@@ -6,6 +6,10 @@ import type { AboutContent } from "@/domain/entities/about-content";
 import type { CertificationsContent } from "@/domain/entities/certification";
 import type { HomeContent } from "@/domain/entities/home-content";
 import { useHomeViewModel } from "@/presentation/viewmodels/useHomeViewModel";
+import {
+  useDynamicAbout,
+  useDynamicHome,
+} from "@/presentation/context/DynamicContentContext";
 import { SiteHeader } from "@/presentation/components/layout/SiteHeader";
 import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
 import { RevealOnScroll } from "@/presentation/components/RevealOnScroll";
@@ -13,14 +17,16 @@ import { CertificationsSection } from "@/presentation/components/shared/Certific
 
 export function AboutPageView({
   site,
-  about,
+  about: aboutSeed,
   certifications,
 }: {
   site: HomeContent;
   about: AboutContent;
   certifications: CertificationsContent;
 }) {
-  const vm = useHomeViewModel(site);
+  const siteContent = useDynamicHome(site);
+  const about = useDynamicAbout(aboutSeed);
+  const vm = useHomeViewModel(siteContent);
 
   return (
     <>

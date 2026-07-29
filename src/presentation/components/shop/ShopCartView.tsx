@@ -118,19 +118,59 @@ export function ShopCartView({ site }: { site: HomeContent }) {
                     </div>
                     <div className="shop-cart__qty">
                       <label htmlFor={`qty-${item.product.id}`}>Quantity (kg)</label>
-                      <input
-                        id={`qty-${item.product.id}`}
-                        type="number"
-                        min={item.product.minOrderKg}
-                        step={25}
-                        value={item.quantityKg}
-                        onChange={(event) =>
-                          updateQuantity(
-                            item.product.id,
-                            Number(event.target.value) || 0,
-                          )
-                        }
-                      />
+                      <div className="qty-stepper">
+                        <button
+                          type="button"
+                          className="qty-stepper__btn"
+                          aria-label="Decrease quantity"
+                          disabled={item.quantityKg <= item.product.minOrderKg}
+                          onClick={() =>
+                            updateQuantity(
+                              item.product.id,
+                              Math.max(
+                                item.product.minOrderKg,
+                                item.quantityKg - 5,
+                              ),
+                            )
+                          }
+                        >
+                          <span className="material-symbols-outlined" aria-hidden="true">
+                            remove
+                          </span>
+                        </button>
+                        <input
+                          id={`qty-${item.product.id}`}
+                          type="number"
+                          min={item.product.minOrderKg}
+                          step={5}
+                          value={item.quantityKg}
+                          onChange={(event) =>
+                            updateQuantity(
+                              item.product.id,
+                              Math.max(
+                                item.product.minOrderKg,
+                                Number(event.target.value) ||
+                                  item.product.minOrderKg,
+                              ),
+                            )
+                          }
+                        />
+                        <button
+                          type="button"
+                          className="qty-stepper__btn"
+                          aria-label="Increase quantity"
+                          onClick={() =>
+                            updateQuantity(
+                              item.product.id,
+                              item.quantityKg + 5,
+                            )
+                          }
+                        >
+                          <span className="material-symbols-outlined" aria-hidden="true">
+                            add
+                          </span>
+                        </button>
+                      </div>
                       <button
                         type="button"
                         className="shop-cart__remove"

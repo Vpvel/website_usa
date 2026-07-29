@@ -52,6 +52,7 @@ export default async function ShopProductDetailPage({
       product={product}
       categoryTitle={category?.title ?? "Products"}
       related={related}
+      catalog={catalog}
     />
   );
 }

@@ -4,10 +4,14 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { HomeContent } from "@/domain/entities/home-content";
-import type { ShopProduct } from "@/domain/entities/shop-product";
+import type { ShopCatalog, ShopProduct } from "@/domain/entities/shop-product";
 import { useHomeViewModel } from "@/presentation/viewmodels/useHomeViewModel";
 import { useCart } from "@/presentation/context/CartContext";
 import { useWishlist } from "@/presentation/context/WishlistContext";
+import {
+  useDynamicCatalog,
+  useDynamicHome,
+} from "@/presentation/context/DynamicContentContext";
 import { SiteHeader } from "@/presentation/components/layout/SiteHeader";
 import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
 
@@ -20,16 +24,31 @@ function formatUsd(value: number) {
 
 export function ShopProductDetailView({
   site,
-  product,
-  categoryTitle,
-  related,
+  product: seedProduct,
+  categoryTitle: seedCategoryTitle,
+  related: seedRelated,
+  catalog: seedCatalog,
 }: {
   site: HomeContent;
   product: ShopProduct;
   categoryTitle: string;
   related: ShopProduct[];
+  catalog: ShopCatalog;
 }) {
-  const vm = useHomeViewModel(site);
+  const siteContent = useDynamicHome(site);
+  const catalog = useDynamicCatalog(seedCatalog);
+  const product =
+    catalog.categories
+      .flatMap((item) => item.products)
+      .find((item) => item.id === seedProduct.id) ?? seedProduct;
+  const category =
+    catalog.categories.find((item) => item.id === product.category) ?? null;
+  const categoryTitle = category?.title ?? seedCategoryTitle;
+  const related =
+    category?.products.filter((item) => item.id !== product.id).slice(0, 4) ??
+    seedRelated;
+
+  const vm = useHomeViewModel(siteContent);
   const { addItem, itemCount, productCount } = useCart();
   const { has, toggle, count: wishCount } = useWishlist();
   const [qty, setQty] = useState(product.minOrderKg);
@@ -112,14 +131,48 @@ export function ShopProductDetailView({
 
             <div className="pdp__qty">
               <label htmlFor="pdp-qty">Quantity (kg)</label>
-              <input
-                id="pdp-qty"
-                type="number"
-                min={product.minOrderKg}
-                step={5}
-                value={qty}
-                onChange={(event) => setQty(Number(event.target.value))}
-              />
+              <div className="qty-stepper">
+                <button
+                  type="button"
+                  className="qty-stepper__btn"
+                  aria-label="Decrease quantity"
+                  disabled={qty <= product.minOrderKg}
+                  onClick={() =>
+                    setQty((current) =>
+                      Math.max(product.minOrderKg, current - 5),
+                    )
+                  }
+                >
+                  <span className="material-symbols-outlined" aria-hidden="true">
+                    remove
+                  </span>
+                </button>
+                <input
+                  id="pdp-qty"
+                  type="number"
+                  min={product.minOrderKg}
+                  step={5}
+                  value={qty}
+                  onChange={(event) =>
+                    setQty(
+                      Math.max(
+                        product.minOrderKg,
+                        Number(event.target.value) || product.minOrderKg,
+                      ),
+                    )
+                  }
+                />
+                <button
+                  type="button"
+                  className="qty-stepper__btn"
+                  aria-label="Increase quantity"
+                  onClick={() => setQty((current) => current + 5)}
+                >
+                  <span className="material-symbols-outlined" aria-hidden="true">
+                    add
+                  </span>
+                </button>
+              </div>
             </div>
 
             <div className="pdp__actions">

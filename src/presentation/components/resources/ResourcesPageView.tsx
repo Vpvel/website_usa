@@ -9,31 +9,36 @@ import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
 import { RevealOnScroll } from "@/presentation/components/RevealOnScroll";
 import { CertificationsSection } from "@/presentation/components/shared/CertificationsSection";
 
+const PRODUCT_BROCHURE_HREF = "/pdf/product_brochure.pdf";
+
 const resourceSections = [
   {
     id: "tds",
     title: "Technical Data Sheets",
     body: "Request product TDS and specification sheets for formulation and QA review.",
-  },
-  {
-    id: "brochures",
-    title: "Product Brochures",
-    body: "Category overviews for native starch, organic cassava flour, sweeteners, clean-label, and modified starch.",
+    actionHref: "/contact",
+    actionLabel: "Request TDS",
   },
   {
     id: "faq",
     title: "FAQ",
     body: "Common questions on sampling, MOQ, packaging, documentation, and US supply.",
+    actionHref: "/contact",
+    actionLabel: "Contact us",
   },
   {
     id: "knowledge",
     title: "Knowledge Center",
     body: "Application notes and clean-label formulation guidance for bakery, dairy, sauces, and snacks.",
+    actionHref: "/contact",
+    actionLabel: "Contact us",
   },
   {
     id: "blog",
     title: "Blog",
     body: "Updates on starch innovation, organic ingredients, and manufacturing best practices.",
+    actionHref: "/contact",
+    actionLabel: "Contact us",
   },
 ] as const;
 
@@ -71,6 +76,35 @@ export function ResourcesPageView({
           </p>
         </header>
 
+        <section id="brochures" className="brochure-panel reveal" data-reveal>
+          <div className="brochure-panel__copy">
+            <p className="brochure-panel__eyebrow">Product brochure</p>
+            <h2>Angel Starch product brochure</h2>
+            <p>
+              Download our product brochure for native starch, organic cassava
+              flour, sweeteners, clean-label starch, and modified starch
+              solutions.
+            </p>
+            <div className="brochure-panel__actions">
+              <a
+                href={PRODUCT_BROCHURE_HREF}
+                className="btn btn--primary"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View brochure
+              </a>
+              <a
+                href={PRODUCT_BROCHURE_HREF}
+                className="btn btn--ghost"
+                download="Angel-Starch-Product-Brochure.pdf"
+              >
+                Download PDF
+              </a>
+            </div>
+          </div>
+        </section>
+
         <CertificationsSection content={certifications} />
 
         <section className="resources-grid" aria-label="Resource topics">
@@ -78,8 +112,8 @@ export function ResourcesPageView({
             <article key={section.id} id={section.id} className="resources-card">
               <h2>{section.title}</h2>
               <p>{section.body}</p>
-              <Link href="/contact" className="btn btn--ghost">
-                Contact us
+              <Link href={section.actionHref} className="btn btn--ghost">
+                {section.actionLabel}
               </Link>
             </article>
           ))}

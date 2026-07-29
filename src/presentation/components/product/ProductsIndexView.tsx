@@ -13,6 +13,10 @@ import type {
 import { useHomeViewModel } from "@/presentation/viewmodels/useHomeViewModel";
 import { useCart } from "@/presentation/context/CartContext";
 import { useWishlist } from "@/presentation/context/WishlistContext";
+import {
+  useDynamicCatalog,
+  useDynamicHome,
+} from "@/presentation/context/DynamicContentContext";
 import { SiteHeader } from "@/presentation/components/layout/SiteHeader";
 import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
 import { RevealOnScroll } from "@/presentation/components/RevealOnScroll";
@@ -102,18 +106,21 @@ function ProductCard({
 
 export function ProductsIndexView({
   site,
-  catalog,
+  catalog: catalogSeed,
 }: {
   site: HomeContent;
   catalog: ShopCatalog;
 }) {
-  const vm = useHomeViewModel(site);
+  const siteContent = useDynamicHome(site);
+  const catalog = useDynamicCatalog(catalogSeed);
+  const vm = useHomeViewModel(siteContent);
   const searchParams = useSearchParams();
   const { addItem, itemCount, productCount } = useCart();
   const { count: wishCount } = useWishlist();
   const categoryIds = catalog.categories.map((category) => category.id);
-  const initialFilter = isCategoryId(searchParams.get("category"), categoryIds)
-    ? searchParams.get("category")!
+  const categoryParam = searchParams.get("category");
+  const initialFilter: FilterId = isCategoryId(categoryParam, categoryIds)
+    ? categoryParam
     : "all";
   const [filter, setFilter] = useState<FilterId>(initialFilter);
   const [addedId, setAddedId] = useState<string | null>(null);

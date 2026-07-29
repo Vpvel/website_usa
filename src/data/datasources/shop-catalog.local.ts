@@ -8,11 +8,16 @@ const SOURCE = "https://www.indiamart.com/angelfoodstarch/";
 
 const img = {
   potato: "/images/product_starch/PotatoProteinIsolate.webp",
+  potatoStarch: "/images/product_starch/potato_s.webp",
   sweetPotato: "/images/product_starch/8f2a6eb2-7454-4db1-a202-1a1d5c815168.webp",
+  sweetPotatoStarch: "/images/product_starch/sweet_potato_starch.webp",
+  orangeSweetPotatoFlour: "/images/product_starch/orangesweetpotatoflour.webp",
   cassava: "/images/product_starch/cassavaflourbag.webp",
   cassavaAlt: "/images/product_starch/cassava_flour_pack.webp",
   corn: "/images/product_starch/cornmaltodextrinpack.webp",
   tapioca: "/images/product_starch/tapiocamaltodextrinpack_a27d5209-720e-4f33-95e9-fd063bb9ffaf.webp",
+  tapiocaStarch: "/images/product_starch/tapioca_starch.webp",
+  tapiocaStarchAlt: "/images/product_starch/tapioca_starch1.webp",
 };
 
 function product(
@@ -38,7 +43,7 @@ const nativeStarchProducts: ShopProduct[] = [
       "Extracted from high-quality cassava roots with excellent viscosity, smooth texture, and process stability.",
     pricePerKg: 1.1,
     category: "native-starch",
-    imageSrc: img.tapioca,
+    imageSrc: img.tapiocaStarch,
     details: nativeStarchProductDetails["tapioca-starch"],
   }),
   product({
@@ -49,7 +54,7 @@ const nativeStarchProducts: ShopProduct[] = [
       "Cold water soluble tapioca starch for instant hydration, creamy mouthfeel, and clean-label systems.",
     pricePerKg: 1.85,
     category: "native-starch",
-    imageSrc: img.cassavaAlt,
+    imageSrc: img.tapiocaStarchAlt,
     details: nativeStarchProductDetails["angel-cws-ts-native"],
   }),
   product({
@@ -60,7 +65,7 @@ const nativeStarchProducts: ShopProduct[] = [
       "Premium sweet potato starch with outstanding clarity, high viscosity, and freeze-thaw stability.",
     pricePerKg: 1.45,
     category: "native-starch",
-    imageSrc: img.sweetPotato,
+    imageSrc: img.sweetPotatoStarch,
     details: nativeStarchProductDetails["sweet-potato-starch"],
   }),
   product({
@@ -71,7 +76,7 @@ const nativeStarchProducts: ShopProduct[] = [
       "Nutritious orange sweet potato flour rich in fibre and beta-carotene for bakery and functional foods.",
     pricePerKg: 1.75,
     category: "native-starch",
-    imageSrc: img.sweetPotato,
+    imageSrc: img.orangeSweetPotatoFlour,
     details: nativeStarchProductDetails["orange-sweet-potato-flour"],
   }),
   product({
@@ -82,7 +87,7 @@ const nativeStarchProducts: ShopProduct[] = [
       "Premium potato starch with exceptional water-binding, smooth texture, and high viscosity.",
     pricePerKg: 1.35,
     category: "native-starch",
-    imageSrc: img.potato,
+    imageSrc: img.potatoStarch,
     packaging: "25 kg bags",
     details: nativeStarchProductDetails["potato-starch-13m"],
   }),
