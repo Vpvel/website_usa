@@ -10,6 +10,7 @@ import { GetContactContentUseCase } from "@/domain/usecases/get-contact-content.
 import { GetHomeContentUseCase } from "@/domain/usecases/get-home-content.usecase";
 import { GetProductDetailUseCase } from "@/domain/usecases/get-product-detail.usecase";
 import { GetShopCatalogUseCase } from "@/domain/usecases/get-shop-catalog.usecase";
+import { GetShopProductUseCase } from "@/domain/usecases/get-shop-product.usecase";
 
 const homeContentRepository = new HomeContentRepositoryImpl();
 const productRepository = new ProductRepositoryImpl();
@@ -31,6 +32,8 @@ export const getApplicationDetailUseCase = new GetApplicationDetailUseCase(
 );
 
 export const getShopCatalogUseCase = new GetShopCatalogUseCase(shopRepository);
+
+export const getShopProductUseCase = new GetShopProductUseCase(shopRepository);
 
 export const getAboutContentUseCase = new GetAboutContentUseCase(
   aboutRepository,

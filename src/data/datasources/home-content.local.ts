@@ -192,7 +192,7 @@ export const homeContentLocal: HomeContent = {
         imageSrc: "/images/product_starch/tapiocamaltodextrinpack_a27d5209-720e-4f33-95e9-fd063bb9ffaf.webp",
         imageAlt: "Angel Tapioca Starch pack",
         ctaLabel: "Shop now",
-        ctaHref: "/shop#tapioca-starch",
+        ctaHref: "/shop/product/tapioca-starch",
       },
       {
         id: "cassava-flour-mv-100",
@@ -200,7 +200,7 @@ export const homeContentLocal: HomeContent = {
         imageSrc: "/images/product_starch/cassavaflourbag.webp",
         imageAlt: "Angel Organic Cassava Flour bag",
         ctaLabel: "Shop now",
-        ctaHref: "/shop#cassava-flour-mv-100",
+        ctaHref: "/shop/product/cassava-flour-mv-100",
       },
       {
         id: "maltox-ms-md",
@@ -208,7 +208,7 @@ export const homeContentLocal: HomeContent = {
         imageSrc: "/images/product_starch/cornmaltodextrinpack.webp",
         imageAlt: "Angel Corn Maltodextrin pack",
         ctaLabel: "Shop now",
-        ctaHref: "/shop#maltox-ms-md",
+        ctaHref: "/shop/product/maltox-ms-md",
       },
       {
         id: "stabiflo-ts-hv60-e1442",
@@ -216,7 +216,7 @@ export const homeContentLocal: HomeContent = {
         imageSrc: "/images/product_starch/8f2a6eb2-7454-4db1-a202-1a1d5c815168.webp",
         imageAlt: "Angel modified starch pack",
         ctaLabel: "Shop now",
-        ctaHref: "/shop#stabiflo-ts-hv60-e1442",
+        ctaHref: "/shop/product/stabiflo-ts-hv60-e1442",
       },
     ],
   },

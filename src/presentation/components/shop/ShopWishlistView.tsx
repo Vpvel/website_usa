@@ -59,25 +59,32 @@ export function ShopWishlistView({ site }: { site: HomeContent }) {
           <div className="shop-wishlist-grid">
             {items.map((product) => (
               <article key={product.id} className="shop-wishlist-card">
-                <div className="shop-wishlist-card__media">
+                <Link
+                  href={`/shop/product/${product.id}`}
+                  className="shop-wishlist-card__media"
+                >
                   <Image
                     src={product.imageSrc}
                     alt={product.shortName}
                     fill
                     sizes="220px"
                   />
-                  <button
-                    type="button"
-                    className="wish-btn is-active"
-                    aria-label="Remove from wishlist"
-                    onClick={() => remove(product.id)}
-                  >
-                    <span className="material-symbols-outlined" aria-hidden="true">
-                      favorite
-                    </span>
-                  </button>
-                </div>
-                <h2>{product.shortName}</h2>
+                </Link>
+                <button
+                  type="button"
+                  className="wish-btn is-active"
+                  aria-label="Remove from wishlist"
+                  onClick={() => remove(product.id)}
+                >
+                  <span className="material-symbols-outlined" aria-hidden="true">
+                    favorite
+                  </span>
+                </button>
+                <h2>
+                  <Link href={`/shop/product/${product.id}`}>
+                    {product.shortName}
+                  </Link>
+                </h2>
                 <p>{formatUsd(product.pricePerKg)}/kg</p>
                 <div className="shop-wishlist-card__actions">
                   <button

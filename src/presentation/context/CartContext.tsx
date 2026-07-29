@@ -17,7 +17,9 @@ const CART_PREFIX = "angel-starch-shop-cart-v1";
 interface CartContextValue {
   items: CartItem[];
   itemCount: number;
+  productCount: number;
   subtotal: number;
+  lastAddedAt: number;
   addItem: (product: ShopProduct, quantityKg?: number) => void;
   updateQuantity: (productId: string, quantityKg: number) => void;
   removeItem: (productId: string) => void;
@@ -50,6 +52,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { user, hydrated: authHydrated } = useAuth();
   const [items, setItems] = useState<CartItem[]>([]);
   const [hydrated, setHydrated] = useState(false);
+  const [lastAddedAt, setLastAddedAt] = useState(0);
   const userId = user?.id ?? null;
 
   useEffect(() => {
@@ -65,6 +68,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value = useMemo<CartContextValue>(() => {
     const itemCount = items.reduce((sum, item) => sum + item.quantityKg, 0);
+    const productCount = items.length;
     const subtotal = items.reduce(
       (sum, item) => sum + item.quantityKg * item.product.pricePerKg,
       0,
@@ -73,7 +77,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     return {
       items,
       itemCount,
+      productCount,
       subtotal,
+      lastAddedAt,
       addItem: (product, quantityKg = product.minOrderKg) => {
         setItems((current) => {
           const existing = current.find((item) => item.product.id === product.id);
@@ -89,6 +95,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           }
           return [...current, { product, quantityKg }];
         });
+        setLastAddedAt(Date.now());
       },
       updateQuantity: (productId, quantityKg) => {
         setItems((current) =>
@@ -108,7 +115,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       },
       clearCart: () => setItems([]),
     };
-  }, [items]);
+  }, [items, lastAddedAt]);
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

@@ -36,13 +36,21 @@ export function SiteHeader({
   const shopMenuRef = useRef<HTMLDivElement>(null);
   const [openMobileSection, setOpenMobileSection] = useState<string | null>(null);
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
-  const { itemCount, items } = useCart();
+  const { itemCount, productCount, lastAddedAt } = useCart();
   const { user, logout } = useAuth();
   const { count: wishCount } = useWishlist();
-  const cartProductCount = items.length;
+  const cartProductCount = productCount;
   const cartBadge = cartProductCount > 0 ? cartProductCount : 0;
+  const [cartBump, setCartBump] = useState(false);
 
   useClickOutside(navRef, closeDropdown, openDropdownId !== null);
+
+  useEffect(() => {
+    if (!lastAddedAt) return;
+    setCartBump(true);
+    const timer = window.setTimeout(() => setCartBump(false), 700);
+    return () => window.clearTimeout(timer);
+  }, [lastAddedAt]);
 
   useEffect(() => {
     if (!isShopMenuOpen) return;
@@ -140,11 +148,6 @@ export function SiteHeader({
                 }}
               >
                 Shop starch
-                {user && (cartBadge > 0 || wishCount > 0) ? (
-                  <span className="shop-link__badge">
-                    {cartBadge + wishCount}
-                  </span>
-                ) : null}
               </Link>
               <button
                 type="button"
@@ -330,6 +333,35 @@ export function SiteHeader({
               </div>
             ) : null}
           </div>
+
+          <Link
+            href="/shop/cart"
+            className={`site-header__cart${cartBump ? " is-bump" : ""}`}
+            aria-label={
+              cartBadge > 0
+                ? `Cart, ${cartBadge} products, ${itemCount} kg`
+                : "Cart"
+            }
+            onClick={() => {
+              closeDropdown();
+              closeShopMenu();
+              closeMobileMenu();
+            }}
+          >
+            <span className="material-symbols-outlined" aria-hidden="true">
+              shopping_cart
+            </span>
+            {cartBadge > 0 ? (
+              <span className={`shop-link__badge${cartBump ? " is-pop" : ""}`}>
+                {cartBadge}
+              </span>
+            ) : null}
+            {cartBump ? (
+              <span className="site-header__cart-fly" aria-hidden="true">
+                +1
+              </span>
+            ) : null}
+          </Link>
 
           <button
             type="button"

@@ -42,26 +42,28 @@ function CategoryProductCard({
       data-reveal
       data-reveal-delay={String(delay)}
     >
-      <div className="shop-cat-card__media">
+      <Link href={`/shop/product/${product.id}`} className="shop-cat-card__media">
         <Image
           src={product.imageSrc}
           alt={product.shortName}
           fill
           sizes="(max-width: 768px) 50vw, 20vw"
         />
-        <button
-          type="button"
-          className={`wish-btn${wished ? " is-active" : ""}`}
-          aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
-          aria-pressed={wished}
-          onClick={() => toggle(product)}
-        >
-          <span className="material-symbols-outlined" aria-hidden="true">
-            {wished ? "favorite" : "favorite_border"}
-          </span>
-        </button>
-      </div>
-      <h3>{product.shortName}</h3>
+      </Link>
+      <button
+        type="button"
+        className={`wish-btn${wished ? " is-active" : ""}`}
+        aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
+        aria-pressed={wished}
+        onClick={() => toggle(product)}
+      >
+        <span className="material-symbols-outlined" aria-hidden="true">
+          {wished ? "favorite" : "favorite_border"}
+        </span>
+      </button>
+      <h3>
+        <Link href={`/shop/product/${product.id}`}>{product.shortName}</Link>
+      </h3>
       <p className="shop-cat-card__price">{formatUsd(product.pricePerKg)}/kg</p>
       <div className="shop-cat-card__actions">
         <button
@@ -71,6 +73,9 @@ function CategoryProductCard({
         >
           {isAdded ? "Added" : "Add to cart"}
         </button>
+        <Link href={`/shop/product/${product.id}`} className="shop-cat-card__details">
+          Details
+        </Link>
       </div>
     </article>
   );
@@ -84,7 +89,7 @@ export function ShopPageView({
   catalog: ShopCatalog;
 }) {
   const vm = useHomeViewModel(site);
-  const { addItem, itemCount } = useCart();
+  const { addItem, itemCount, productCount } = useCart();
   const { count: wishCount } = useWishlist();
   const [addedId, setAddedId] = useState<string | null>(null);
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
@@ -124,7 +129,7 @@ export function ShopPageView({
             </div>
             <div className="shop-hero__actions">
               <Link href="/shop/cart" className="btn btn--primary">
-                View cart ({itemCount} kg)
+                View cart ({productCount} · {itemCount} kg)
               </Link>
               <Link href="/shop/wishlist" className="btn btn--ghost">
                 Wishlist ({wishCount})

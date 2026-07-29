@@ -21,7 +21,7 @@ function product(
     packaging: "25 kg bags",
     sourceUrl: SOURCE,
     ...partial,
-    href: `/shop#${partial.id}`,
+    href: `/shop/product/${partial.id}`,
   };
 }
 

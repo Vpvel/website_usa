@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import type { HomeContent } from "@/domain/entities/home-content";
 import type {
   ShopCatalog,
@@ -17,6 +18,13 @@ import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
 import { RevealOnScroll } from "@/presentation/components/RevealOnScroll";
 
 type FilterId = "all" | ShopCategoryId;
+
+function isCategoryId(
+  value: string | null,
+  categories: ShopCategoryId[],
+): value is ShopCategoryId {
+  return Boolean(value && categories.includes(value as ShopCategoryId));
+}
 
 function formatUsd(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -42,29 +50,31 @@ function ProductCard({
 
   return (
     <article className="fk-card">
-      <div className="fk-card__media">
+      <Link href={`/shop/product/${product.id}`} className="fk-card__media">
         <Image
           src={product.imageSrc}
           alt={product.shortName}
           fill
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
         />
-        <button
-          type="button"
-          className={`wish-btn${wished ? " is-active" : ""}`}
-          aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
-          aria-pressed={wished}
-          onClick={() => toggle(product)}
-        >
-          <span className="material-symbols-outlined" aria-hidden="true">
-            {wished ? "favorite" : "favorite_border"}
-          </span>
-        </button>
-      </div>
+      </Link>
+      <button
+        type="button"
+        className={`wish-btn${wished ? " is-active" : ""}`}
+        aria-label={wished ? "Remove from wishlist" : "Add to wishlist"}
+        aria-pressed={wished}
+        onClick={() => toggle(product)}
+      >
+        <span className="material-symbols-outlined" aria-hidden="true">
+          {wished ? "favorite" : "favorite_border"}
+        </span>
+      </button>
 
       <div className="fk-card__body">
         <p className="fk-card__category">{categoryTitle}</p>
-        <h3 title={product.name}>{product.shortName}</h3>
+        <h3 title={product.name}>
+          <Link href={`/shop/product/${product.id}`}>{product.shortName}</Link>
+        </h3>
         <p className="fk-card__summary">{product.summary}</p>
         <p className="fk-card__price">
           {formatUsd(product.pricePerKg)}
@@ -81,7 +91,7 @@ function ProductCard({
           >
             {isAdded ? "Added" : "Add to cart"}
           </button>
-          <Link href={`/shop#${product.id}`} className="fk-card__link">
+          <Link href={`/shop/product/${product.id}`} className="fk-card__link">
             Details
           </Link>
         </div>
@@ -98,9 +108,14 @@ export function ProductsIndexView({
   catalog: ShopCatalog;
 }) {
   const vm = useHomeViewModel(site);
-  const { addItem, itemCount } = useCart();
+  const searchParams = useSearchParams();
+  const { addItem, itemCount, productCount } = useCart();
   const { count: wishCount } = useWishlist();
-  const [filter, setFilter] = useState<FilterId>("all");
+  const categoryIds = catalog.categories.map((category) => category.id);
+  const initialFilter = isCategoryId(searchParams.get("category"), categoryIds)
+    ? searchParams.get("category")!
+    : "all";
+  const [filter, setFilter] = useState<FilterId>(initialFilter);
   const [addedId, setAddedId] = useState<string | null>(null);
 
   const categoryTitleById = useMemo(() => {
@@ -144,7 +159,7 @@ export function ProductsIndexView({
           </div>
           <div className="fk-products__toolbar-actions">
             <Link href="/shop/cart" className="btn btn--ghost">
-              Cart ({itemCount} kg)
+              Cart ({productCount} · {itemCount} kg)
             </Link>
             <Link href="/shop/wishlist" className="btn btn--ghost">
               Wishlist ({wishCount})

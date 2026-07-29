@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import {
   getHomeContentUseCase,
   getShopCatalogUseCase,
@@ -17,5 +18,9 @@ export default async function ProductsIndexPage() {
     getShopCatalogUseCase.execute(),
   ]);
 
-  return <ProductsIndexView site={site} catalog={catalog} />;
+  return (
+    <Suspense fallback={null}>
+      <ProductsIndexView site={site} catalog={catalog} />
+    </Suspense>
+  );
 }
