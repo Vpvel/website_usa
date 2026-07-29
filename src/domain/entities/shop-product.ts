@@ -5,6 +5,18 @@ export type ShopCategoryId =
   | "clean-label-starch"
   | "modified-starch";
 
+export interface ShopProductSpec {
+  property: string;
+  value: string;
+}
+
+export interface ShopProductDetails {
+  overview: string;
+  features: string[];
+  applications: string[];
+  specifications: ShopProductSpec[];
+}
+
 export interface ShopProduct {
   id: string;
   name: string;
@@ -18,12 +30,17 @@ export interface ShopProduct {
   imageSrc: string;
   href: string;
   sourceUrl: string;
+  details?: ShopProductDetails;
 }
 
 export interface ShopCategory {
   id: ShopCategoryId;
   title: string;
   description: string;
+  overview?: string;
+  features?: string[];
+  applications?: string[];
+  specifications?: ShopProductSpec[];
   products: ShopProduct[];
 }
 

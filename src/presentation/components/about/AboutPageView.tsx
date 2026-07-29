@@ -3,18 +3,22 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { AboutContent } from "@/domain/entities/about-content";
+import type { CertificationsContent } from "@/domain/entities/certification";
 import type { HomeContent } from "@/domain/entities/home-content";
 import { useHomeViewModel } from "@/presentation/viewmodels/useHomeViewModel";
 import { SiteHeader } from "@/presentation/components/layout/SiteHeader";
 import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
 import { RevealOnScroll } from "@/presentation/components/RevealOnScroll";
+import { CertificationsSection } from "@/presentation/components/shared/CertificationsSection";
 
 export function AboutPageView({
   site,
   about,
+  certifications,
 }: {
   site: HomeContent;
   about: AboutContent;
+  certifications: CertificationsContent;
 }) {
   const vm = useHomeViewModel(site);
 
@@ -191,6 +195,8 @@ export function AboutPageView({
             ))}
           </div>
         </section>
+
+        <CertificationsSection content={certifications} />
 
         <section className="about-markets reveal" data-reveal>
           <h2>{about.markets.headline}</h2>

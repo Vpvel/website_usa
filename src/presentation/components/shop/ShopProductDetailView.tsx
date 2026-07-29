@@ -35,6 +35,7 @@ export function ShopProductDetailView({
   const [qty, setQty] = useState(product.minOrderKg);
   const [added, setAdded] = useState(false);
   const wished = has(product.id);
+  const details = product.details;
 
   function handleAdd() {
     const amount = Math.max(product.minOrderKg, qty || product.minOrderKg);
@@ -95,7 +96,9 @@ export function ShopProductDetailView({
           <div className="pdp__info">
             <p className="pdp__category">{categoryTitle}</p>
             <h1>{product.name}</h1>
-            <p className="pdp__summary">{product.summary}</p>
+            <p className="pdp__summary">
+              {details?.overview ?? product.summary}
+            </p>
 
             <div className="pdp__price-box">
               <p className="pdp__price">
@@ -138,25 +141,6 @@ export function ShopProductDetailView({
               <p className="pdp__added-note">Added — cart updated in the top menu</p>
             ) : null}
 
-            <dl className="pdp__specs">
-              <div>
-                <dt>Product</dt>
-                <dd>{product.shortName}</dd>
-              </div>
-              <div>
-                <dt>Category</dt>
-                <dd>{categoryTitle}</dd>
-              </div>
-              <div>
-                <dt>Currency</dt>
-                <dd>{product.currency}</dd>
-              </div>
-              <div>
-                <dt>Availability</dt>
-                <dd>In stock · US supply quote available</dd>
-              </div>
-            </dl>
-
             <div className="pdp__links">
               <Link href="/products">Back to products</Link>
               <Link href="/shop">Browse shop</Link>
@@ -164,6 +148,79 @@ export function ShopProductDetailView({
             </div>
           </div>
         </section>
+
+        {details ? (
+          <section className="pdp__details" aria-label="Product details">
+            <article className="pdp__block">
+              <h2>Product Overview</h2>
+              <p>{details.overview}</p>
+            </article>
+
+            <article className="pdp__block">
+              <h2>Key Features</h2>
+              <ul className="pdp__chips">
+                {details.features.map((feature) => (
+                  <li key={feature}>{feature}</li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="pdp__block">
+              <h2>Applications</h2>
+              <ul className="pdp__chips pdp__chips--soft">
+                {details.applications.map((application) => (
+                  <li key={application}>{application}</li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="pdp__block">
+              <h2>Technical Specifications</h2>
+              <div className="pdp__table-wrap">
+                <table className="pdp__table">
+                  <thead>
+                    <tr>
+                      <th scope="col">Property</th>
+                      <th scope="col">Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {details.specifications.map((row) => (
+                      <tr key={row.property}>
+                        <th scope="row">{row.property}</th>
+                        <td>{row.value}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          </section>
+        ) : (
+          <section className="pdp__details">
+            <article className="pdp__block">
+              <h2>Product details</h2>
+              <dl className="pdp__specs">
+                <div>
+                  <dt>Product</dt>
+                  <dd>{product.shortName}</dd>
+                </div>
+                <div>
+                  <dt>Category</dt>
+                  <dd>{categoryTitle}</dd>
+                </div>
+                <div>
+                  <dt>Packaging</dt>
+                  <dd>{product.packaging}</dd>
+                </div>
+                <div>
+                  <dt>Availability</dt>
+                  <dd>In stock · US supply quote available</dd>
+                </div>
+              </dl>
+            </article>
+          </section>
+        )}
 
         {related.length > 0 ? (
           <section className="pdp__related" aria-labelledby="related-title">

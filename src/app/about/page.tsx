@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import {
   getAboutContentUseCase,
+  getCertificationsUseCase,
   getHomeContentUseCase,
 } from "@/di/container";
 import { AboutPageView } from "@/presentation/components/about/AboutPageView";
@@ -19,10 +20,17 @@ export const metadata: Metadata = {
 };
 
 export default async function AboutPage() {
-  const [site, about] = await Promise.all([
+  const [site, about, certifications] = await Promise.all([
     getHomeContentUseCase.execute(),
     getAboutContentUseCase.execute(),
+    getCertificationsUseCase.execute(),
   ]);
 
-  return <AboutPageView site={site} about={about} />;
+  return (
+    <AboutPageView
+      site={site}
+      about={about}
+      certifications={certifications}
+    />
+  );
 }

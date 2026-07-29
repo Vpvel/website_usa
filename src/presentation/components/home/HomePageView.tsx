@@ -1,6 +1,7 @@
 "use client";
 
 import type { HomeContent } from "@/domain/entities/home-content";
+import type { CertificationsContent } from "@/domain/entities/certification";
 import { useHomeViewModel } from "@/presentation/viewmodels/useHomeViewModel";
 import { SiteHeader } from "@/presentation/components/layout/SiteHeader";
 import { SiteFooter } from "@/presentation/components/layout/SiteFooter";
@@ -9,9 +10,16 @@ import { ApplicationsSection } from "@/presentation/components/home/Applications
 import { StatsSection } from "@/presentation/components/home/StatsSection";
 import { WhyPartnerSection } from "@/presentation/components/home/WhyPartnerSection";
 import { FavoritesSection } from "@/presentation/components/home/FavoritesSection";
+import { CertificationsSection } from "@/presentation/components/shared/CertificationsSection";
 import { RevealOnScroll } from "@/presentation/components/RevealOnScroll";
 
-export function HomePageView({ content }: { content: HomeContent }) {
+export function HomePageView({
+  content,
+  certifications,
+}: {
+  content: HomeContent;
+  certifications: CertificationsContent;
+}) {
   const vm = useHomeViewModel(content);
 
   return (
@@ -37,6 +45,7 @@ export function HomePageView({ content }: { content: HomeContent }) {
         <ApplicationsSection applications={vm.applications} />
         <WhyPartnerSection whyPartner={vm.whyPartner} />
         <StatsSection stats={vm.stats} />
+        <CertificationsSection content={certifications} />
         <FavoritesSection favorites={vm.favorites} />
       </main>
       <SiteFooter

@@ -11,6 +11,8 @@ import { GetHomeContentUseCase } from "@/domain/usecases/get-home-content.usecas
 import { GetProductDetailUseCase } from "@/domain/usecases/get-product-detail.usecase";
 import { GetShopCatalogUseCase } from "@/domain/usecases/get-shop-catalog.usecase";
 import { GetShopProductUseCase } from "@/domain/usecases/get-shop-product.usecase";
+import { GetCertificationsUseCase } from "@/domain/usecases/get-certifications.usecase";
+import { CertificationRepositoryImpl } from "@/data/repositories/certification.repository.impl";
 
 const homeContentRepository = new HomeContentRepositoryImpl();
 const productRepository = new ProductRepositoryImpl();
@@ -18,6 +20,7 @@ const applicationRepository = new ApplicationRepositoryImpl();
 const shopRepository = new ShopRepositoryImpl();
 const aboutRepository = new AboutRepositoryImpl();
 const contactRepository = new ContactRepositoryImpl();
+const certificationRepository = new CertificationRepositoryImpl();
 
 export const getHomeContentUseCase = new GetHomeContentUseCase(
   homeContentRepository,
@@ -41,4 +44,8 @@ export const getAboutContentUseCase = new GetAboutContentUseCase(
 
 export const getContactContentUseCase = new GetContactContentUseCase(
   contactRepository,
+);
+
+export const getCertificationsUseCase = new GetCertificationsUseCase(
+  certificationRepository,
 );

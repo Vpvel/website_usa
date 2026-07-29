@@ -1,4 +1,8 @@
 import type { ShopCatalog, ShopProduct } from "@/domain/entities/shop-product";
+import {
+  nativeStarchCategoryDetails,
+  nativeStarchProductDetails,
+} from "@/data/datasources/shop-product-details.native.local";
 
 const SOURCE = "https://www.indiamart.com/angelfoodstarch/";
 
@@ -13,7 +17,7 @@ const img = {
 
 function product(
   partial: Omit<ShopProduct, "currency" | "minOrderKg" | "packaging" | "href" | "sourceUrl"> &
-    Partial<Pick<ShopProduct, "minOrderKg" | "packaging" | "sourceUrl">>,
+    Partial<Pick<ShopProduct, "minOrderKg" | "packaging" | "sourceUrl" | "details">>,
 ): ShopProduct {
   return {
     currency: "USD",
@@ -30,46 +34,57 @@ const nativeStarchProducts: ShopProduct[] = [
     id: "tapioca-starch",
     name: "Tapioca Starch",
     shortName: "Tapioca Starch",
-    summary: "Native tapioca starch for clean thickening, binding, and texture in food systems.",
+    summary:
+      "Extracted from high-quality cassava roots with excellent viscosity, smooth texture, and process stability.",
     pricePerKg: 1.1,
     category: "native-starch",
     imageSrc: img.tapioca,
+    details: nativeStarchProductDetails["tapioca-starch"],
   }),
   product({
     id: "angel-cws-ts-native",
     name: "Angel CWS TS",
     shortName: "Angel CWS TS",
-    summary: "Cold-water soluble tapioca starch for instant viscosity and clean-label systems.",
+    summary:
+      "Cold water soluble tapioca starch for instant hydration, creamy mouthfeel, and clean-label systems.",
     pricePerKg: 1.85,
     category: "native-starch",
     imageSrc: img.cassavaAlt,
+    details: nativeStarchProductDetails["angel-cws-ts-native"],
   }),
   product({
     id: "sweet-potato-starch",
     name: "Sweet Potato Starch",
     shortName: "Sweet Potato Starch",
-    summary: "Native sweet potato starch for bakery, snacks, and gluten-free applications.",
+    summary:
+      "Premium sweet potato starch with outstanding clarity, high viscosity, and freeze-thaw stability.",
     pricePerKg: 1.45,
     category: "native-starch",
     imageSrc: img.sweetPotato,
+    details: nativeStarchProductDetails["sweet-potato-starch"],
   }),
   product({
     id: "orange-sweet-potato-flour",
     name: "Orange Sweet Potato Flour",
     shortName: "Orange Sweet Potato Flour",
-    summary: "Orange sweet potato flour for color, nutrition, and clean-label bakery systems.",
+    summary:
+      "Nutritious orange sweet potato flour rich in fibre and beta-carotene for bakery and functional foods.",
     pricePerKg: 1.75,
     category: "native-starch",
     imageSrc: img.sweetPotato,
+    details: nativeStarchProductDetails["orange-sweet-potato-flour"],
   }),
   product({
     id: "potato-starch-13m",
     name: "Potato Starch 13M",
     shortName: "Potato Starch 13M",
-    summary: "Native potato starch grade 13M for thickening, binding, and moisture control.",
+    summary:
+      "Premium potato starch with exceptional water-binding, smooth texture, and high viscosity.",
     pricePerKg: 1.35,
     category: "native-starch",
     imageSrc: img.potato,
+    packaging: "25 kg bags",
+    details: nativeStarchProductDetails["potato-starch-13m"],
   }),
 ];
 
@@ -346,8 +361,11 @@ export const shopCatalogLocal: ShopCatalog = {
     {
       id: "native-starch",
       title: "Native Starch",
-      description:
-        "Native tapioca, potato, and sweet potato starches including Angel CWS TS and Potato Starch 13M for clean-label food applications.",
+      description: nativeStarchCategoryDetails.overview,
+      overview: nativeStarchCategoryDetails.overview,
+      features: nativeStarchCategoryDetails.features,
+      applications: nativeStarchCategoryDetails.applications,
+      specifications: nativeStarchCategoryDetails.specifications,
       products: nativeStarchProducts,
     },
     {
