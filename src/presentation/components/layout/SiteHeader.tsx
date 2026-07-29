@@ -431,20 +431,9 @@ export function SiteHeader({
               </button>
             </>
           ) : (
-            <>
-              <Link href="/" onClick={closeMobileMenu}>
-                Home
-              </Link>
-              <Link href="/about" onClick={closeMobileMenu}>
-                About Us
-              </Link>
-              <Link href="/products" onClick={closeMobileMenu}>
-                Products
-              </Link>
-              <Link href="/account/login" onClick={closeMobileMenu}>
-                Sign in
-              </Link>
-            </>
+            <Link href="/account/login" onClick={closeMobileMenu}>
+              Sign in
+            </Link>
           )}
           <Link
             href="/contact#sample"

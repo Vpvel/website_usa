@@ -1,9 +1,9 @@
 export type ShopCategoryId =
-  | "bakery-modified-starch"
-  | "potato-starch"
-  | "tapioca-starch"
-  | "food-additive"
-  | "food-ingredients";
+  | "native-starch"
+  | "organic-products"
+  | "sweetener"
+  | "clean-label-starch"
+  | "modified-starch";
 
 export interface ShopProduct {
   id: string;
