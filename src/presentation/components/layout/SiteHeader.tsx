@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { NavItem } from "@/domain/entities/nav-item";
@@ -33,28 +33,51 @@ export function SiteHeader({
   | "toggleDropdown"
 >) {
   const navRef = useRef<HTMLElement>(null);
+  const shopMenuRef = useRef<HTMLDivElement>(null);
   const [openMobileSection, setOpenMobileSection] = useState<string | null>(null);
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false);
   const { itemCount, items } = useCart();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const { count: wishCount } = useWishlist();
   const cartProductCount = items.length;
   const cartBadge = cartProductCount > 0 ? cartProductCount : 0;
 
-  useClickOutside(
-    navRef,
-    () => {
-      closeDropdown();
-      setIsShopMenuOpen(false);
-    },
-    openDropdownId !== null || isShopMenuOpen,
-  );
+  useClickOutside(navRef, closeDropdown, openDropdownId !== null);
 
-  const accountHref = user ? "/account/profile" : "/account/login";
-  const accountLabel = user ? "Profile" : "Sign in";
+  useEffect(() => {
+    if (!isShopMenuOpen) return;
+
+    function handlePointerDown(event: MouseEvent | TouchEvent) {
+      const target = event.target as Node;
+      if (shopMenuRef.current && !shopMenuRef.current.contains(target)) {
+        setIsShopMenuOpen(false);
+      }
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setIsShopMenuOpen(false);
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("touchstart", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("touchstart", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isShopMenuOpen]);
+
+  const accountName = user ? user.name.split(" ")[0] : "Guest";
 
   function closeShopMenu() {
     setIsShopMenuOpen(false);
+  }
+
+  function handleSignOut() {
+    logout();
+    closeShopMenu();
+    closeMobileMenu();
   }
 
   return (
@@ -103,108 +126,207 @@ export function SiteHeader({
             Request a Sample
           </Link>
 
-          <div className={`site-header__shop${isShopMenuOpen ? " is-open" : ""}`}>
-            <button
-              type="button"
-              className="btn btn--ghost shop-link"
-              aria-expanded={isShopMenuOpen}
-              aria-haspopup="true"
-              aria-controls="shop-quick-menu"
-              onClick={() => {
-                closeDropdown();
-                setIsShopMenuOpen((open) => !open);
-              }}
-            >
-              Shop starch
-              {cartBadge > 0 ? (
-                <span className="shop-link__badge">{cartBadge}</span>
-              ) : null}
-              <span className="material-symbols-outlined shop-link__chevron" aria-hidden="true">
-                {isShopMenuOpen ? "expand_less" : "expand_more"}
-              </span>
-            </button>
+          <div
+            className={`site-header__shop${isShopMenuOpen ? " is-open" : ""}`}
+            ref={shopMenuRef}
+          >
+            <div className="site-header__shop-trigger">
+              <Link
+                href="/shop"
+                className="btn btn--ghost shop-link"
+                onClick={() => {
+                  closeDropdown();
+                  closeShopMenu();
+                }}
+              >
+                Shop starch
+                {user && (cartBadge > 0 || wishCount > 0) ? (
+                  <span className="shop-link__badge">
+                    {cartBadge + wishCount}
+                  </span>
+                ) : null}
+              </Link>
+              <button
+                type="button"
+                className="site-header__shop-toggle"
+                aria-expanded={isShopMenuOpen}
+                aria-haspopup="true"
+                aria-controls="shop-quick-menu"
+                aria-label={user ? "Open account menu" : "Open menu"}
+                onClick={() => {
+                  closeDropdown();
+                  setIsShopMenuOpen((open) => !open);
+                }}
+              >
+                <span className="material-symbols-outlined" aria-hidden="true">
+                  {isShopMenuOpen ? "expand_less" : "expand_more"}
+                </span>
+              </button>
+            </div>
 
             {isShopMenuOpen ? (
               <div
                 id="shop-quick-menu"
                 className="site-header__shop-menu"
                 role="menu"
-                aria-label="Shop quick actions"
+                aria-label={user ? "Account menu" : "Shop menu"}
               >
-                <Link
-                  href="/shop"
-                  className="site-header__shop-item"
-                  role="menuitem"
-                  onClick={closeShopMenu}
-                >
-                  <span className="material-symbols-outlined" aria-hidden="true">
-                    storefront
-                  </span>
-                  <span>
-                    <strong>Browse shop</strong>
-                    <small>Categories & products</small>
-                  </span>
-                </Link>
-                <Link
-                  href="/shop/cart"
-                  className="site-header__shop-item"
-                  role="menuitem"
-                  onClick={closeShopMenu}
-                >
-                  <span className="site-header__shop-icon-wrap">
-                    <span className="material-symbols-outlined" aria-hidden="true">
-                      shopping_cart
-                    </span>
-                    {cartBadge > 0 ? (
-                      <span className="shop-link__badge">{cartBadge}</span>
-                    ) : null}
-                  </span>
-                  <span>
-                    <strong>Cart</strong>
-                    <small>
-                      {cartProductCount > 0
-                        ? `${cartProductCount} products · ${itemCount} kg`
-                        : "Cart summary"}
-                    </small>
-                  </span>
-                </Link>
-                <Link
-                  href="/shop/wishlist"
-                  className="site-header__shop-item"
-                  role="menuitem"
-                  onClick={closeShopMenu}
-                >
-                  <span className="site-header__shop-icon-wrap">
-                    <span className="material-symbols-outlined" aria-hidden="true">
-                      favorite
-                    </span>
-                    {wishCount > 0 ? (
-                      <span className="shop-link__badge">{wishCount}</span>
-                    ) : null}
-                  </span>
-                  <span>
-                    <strong>Wishlist</strong>
-                    <small>
-                      {wishCount > 0
-                        ? `${wishCount} saved item${wishCount === 1 ? "" : "s"}`
-                        : "Saved favorites"}
-                    </small>
-                  </span>
-                </Link>
-                <Link
-                  href={accountHref}
-                  className="site-header__shop-item"
-                  role="menuitem"
-                  onClick={closeShopMenu}
-                >
-                  <span className="material-symbols-outlined" aria-hidden="true">
-                    {user ? "account_circle" : "person"}
-                  </span>
-                  <span>
-                    <strong>{accountLabel}</strong>
-                    <small>{user ? user.email : "Sign in to save cart"}</small>
-                  </span>
-                </Link>
+                {user ? (
+                  <>
+                    <Link
+                      href="/shop/cart"
+                      className="site-header__shop-item"
+                      role="menuitem"
+                      onClick={closeShopMenu}
+                    >
+                      <span className="site-header__shop-icon" aria-hidden="true">
+                        <span className="material-symbols-outlined">
+                          shopping_cart
+                        </span>
+                        {cartBadge > 0 ? (
+                          <span className="shop-link__badge">{cartBadge}</span>
+                        ) : null}
+                      </span>
+                      <span>
+                        <strong>Cart</strong>
+                        <small>
+                          {cartProductCount > 0
+                            ? `${cartProductCount} products · ${itemCount} kg`
+                            : "Cart summary"}
+                        </small>
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/shop/wishlist"
+                      className="site-header__shop-item"
+                      role="menuitem"
+                      onClick={closeShopMenu}
+                    >
+                      <span className="site-header__shop-icon" aria-hidden="true">
+                        <span className="material-symbols-outlined">favorite</span>
+                        {wishCount > 0 ? (
+                          <span className="shop-link__badge">{wishCount}</span>
+                        ) : null}
+                      </span>
+                      <span>
+                        <strong>Wishlist</strong>
+                        <small>
+                          {wishCount > 0
+                            ? `${wishCount} saved item${wishCount === 1 ? "" : "s"}`
+                            : "Saved favorites"}
+                        </small>
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/shop/orders"
+                      className="site-header__shop-item"
+                      role="menuitem"
+                      onClick={closeShopMenu}
+                    >
+                      <span className="material-symbols-outlined" aria-hidden="true">
+                        receipt_long
+                      </span>
+                      <span>
+                        <strong>Order history</strong>
+                        <small>Past orders</small>
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/account/profile"
+                      className="site-header__shop-item"
+                      role="menuitem"
+                      onClick={closeShopMenu}
+                    >
+                      <span className="material-symbols-outlined" aria-hidden="true">
+                        account_circle
+                      </span>
+                      <span>
+                        <strong>Profile</strong>
+                        <small>{accountName}</small>
+                      </span>
+                    </Link>
+
+                    <button
+                      type="button"
+                      className="site-header__shop-item site-header__shop-item--button"
+                      role="menuitem"
+                      onClick={handleSignOut}
+                    >
+                      <span className="material-symbols-outlined" aria-hidden="true">
+                        logout
+                      </span>
+                      <span>
+                        <strong>Sign out</strong>
+                        <small>End this session</small>
+                      </span>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/"
+                      className="site-header__shop-item"
+                      role="menuitem"
+                      onClick={closeShopMenu}
+                    >
+                      <span className="material-symbols-outlined" aria-hidden="true">
+                        home
+                      </span>
+                      <span>
+                        <strong>Home</strong>
+                        <small>Back to homepage</small>
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/about"
+                      className="site-header__shop-item"
+                      role="menuitem"
+                      onClick={closeShopMenu}
+                    >
+                      <span className="material-symbols-outlined" aria-hidden="true">
+                        info
+                      </span>
+                      <span>
+                        <strong>About Us</strong>
+                        <small>Company & quality</small>
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/products"
+                      className="site-header__shop-item"
+                      role="menuitem"
+                      onClick={closeShopMenu}
+                    >
+                      <span className="material-symbols-outlined" aria-hidden="true">
+                        inventory_2
+                      </span>
+                      <span>
+                        <strong>Products</strong>
+                        <small>Starch catalog</small>
+                      </span>
+                    </Link>
+
+                    <Link
+                      href="/account/login"
+                      className="site-header__shop-item"
+                      role="menuitem"
+                      onClick={closeShopMenu}
+                    >
+                      <span className="material-symbols-outlined" aria-hidden="true">
+                        person
+                      </span>
+                      <span>
+                        <strong>Sign in</strong>
+                        <small>Access cart & orders</small>
+                      </span>
+                    </Link>
+                  </>
+                )}
               </div>
             ) : null}
           </div>
@@ -280,42 +402,50 @@ export function SiteHeader({
               </div>
             );
           })}
-          <div className="site-header__mobile-shop">
-            <p>Shop starch</p>
-            <div className="site-header__mobile-shop-icons">
-              <Link href="/shop" onClick={closeMobileMenu} aria-label="Browse shop">
-                <span className="material-symbols-outlined" aria-hidden="true">
-                  storefront
-                </span>
-                Shop
+          <Link href="/shop" onClick={closeMobileMenu}>
+            Shop starch
+          </Link>
+          {user ? (
+            <>
+              <Link href="/shop/cart" onClick={closeMobileMenu}>
+                Cart
+                {cartProductCount > 0
+                  ? ` (${cartProductCount} · ${itemCount} kg)`
+                  : ""}
               </Link>
-              <Link href="/shop/cart" onClick={closeMobileMenu} aria-label="Cart">
-                <span className="material-symbols-outlined" aria-hidden="true">
-                  shopping_cart
-                </span>
-                Cart{cartBadge > 0 ? ` (${cartBadge})` : ""}
-              </Link>
-              <Link
-                href="/shop/wishlist"
-                onClick={closeMobileMenu}
-                aria-label="Wishlist"
-              >
-                <span className="material-symbols-outlined" aria-hidden="true">
-                  favorite
-                </span>
+              <Link href="/shop/wishlist" onClick={closeMobileMenu}>
                 Wishlist{wishCount > 0 ? ` (${wishCount})` : ""}
               </Link>
-              <Link href={accountHref} onClick={closeMobileMenu} aria-label={accountLabel}>
-                <span className="material-symbols-outlined" aria-hidden="true">
-                  {user ? "account_circle" : "person"}
-                </span>
-                {accountLabel}
+              <Link href="/shop/orders" onClick={closeMobileMenu}>
+                Order history
               </Link>
-            </div>
-          </div>
-          <Link href="/shop/orders" onClick={closeMobileMenu}>
-            Order history
-          </Link>
+              <Link href="/account/profile" onClick={closeMobileMenu}>
+                Profile
+              </Link>
+              <button
+                type="button"
+                className="site-header__mobile-signout"
+                onClick={handleSignOut}
+              >
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/" onClick={closeMobileMenu}>
+                Home
+              </Link>
+              <Link href="/about" onClick={closeMobileMenu}>
+                About Us
+              </Link>
+              <Link href="/products" onClick={closeMobileMenu}>
+                Products
+              </Link>
+              <Link href="/account/login" onClick={closeMobileMenu}>
+                Sign in
+              </Link>
+            </>
+          )}
           <Link
             href="/contact#sample"
             className="btn btn--primary"
