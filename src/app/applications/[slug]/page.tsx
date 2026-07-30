@@ -5,6 +5,7 @@ import {
   getHomeContentUseCase,
 } from "@/di/container";
 import { ApplicationDetailPageView } from "@/presentation/components/application/ApplicationDetailPageView";
+import { buildManagedPageMetadata } from "@/presentation/seo/resolve-managed-seo";
 
 type ApplicationPageProps = {
   params: Promise<{ slug: string }>;
@@ -23,48 +24,18 @@ export async function generateMetadata({
     `${application.title} starch`,
     `${application.title} ingredients`,
     `Related ingredients in ${application.title.toLowerCase()}`,
-    "Angel Starch",
-    "food ingredients",
-    "modified starch",
-    "clean label starch",
     ...ingredientKeywords,
   ];
 
-  const title = `${application.title} Ingredients & Formulation Solutions | Angel Starch`;
-  const description = `${application.pageHeadline} Explore related ingredients in ${application.title.toLowerCase()} from Angel Starch & Food Inc.`;
-  const canonical = `/applications/${application.slug}`;
-
-  return {
-    title,
-    description,
+  return await buildManagedPageMetadata({
+    title: `${application.title} Ingredients & Formulation Solutions`,
+    description: `${application.pageHeadline} Explore related ingredients in ${application.title.toLowerCase()} from Angel Starch & Food Inc.`,
+    path: `/applications/${application.slug}`,
     keywords,
-    alternates: {
-      canonical,
-    },
-    openGraph: {
-      title,
-      description,
-      type: "article",
-      url: canonical,
-      images: [
-        {
-          url: application.heroImageSrc,
-          alt: application.heroImageAlt,
-        },
-      ],
-      siteName: "Angel Starch & Food Inc.",
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [application.heroImageSrc],
-    },
-    robots: {
-      index: true,
-      follow: true,
-    },
-  };
+    image: application.heroImageSrc,
+    imageAlt: application.heroImageAlt,
+    type: "article",
+  });
 }
 
 export default async function ApplicationDetailPage({

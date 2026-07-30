@@ -5,6 +5,12 @@ import {
   Source_Sans_3,
 } from "next/font/google";
 import { AppProviders } from "@/presentation/providers/AppProviders";
+import { JsonLd } from "@/presentation/seo/JsonLd";
+import {
+  buildManagedPageMetadata,
+  getManagedOrganizationFields,
+} from "@/presentation/seo/resolve-managed-seo";
+import { absoluteAssetUrl, getSiteUrl } from "@/presentation/seo/site-url";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -24,17 +30,80 @@ const body = Source_Sans_3({
   weight: ["400", "600", "700"],
 });
 
-export const metadata: Metadata = {
-  title: "Angel Starch & Food Inc. | Clean-Label Ingredients for US Brands",
-  description:
-    "Clean-label texture and stability solutions that help US food brands launch better products—faster.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const managed = await buildManagedPageMetadata({ path: "/" });
+  const org = await getManagedOrganizationFields();
+  const siteUrl = getSiteUrl();
 
-export default function RootLayout({
+  return {
+    metadataBase: new URL(org.fallbackSiteUrl || siteUrl),
+    ...managed,
+    applicationName: org.siteName,
+    authors: [{ name: org.siteName }],
+    creator: org.siteName,
+    publisher: org.siteName,
+    category: "Food Ingredients",
+    formatDetection: {
+      telephone: false,
+      email: false,
+      address: false,
+      date: false,
+    },
+  };
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const org = await getManagedOrganizationFields();
+  const siteUrl = org.fallbackSiteUrl || getSiteUrl();
+
+  const organizationJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${siteUrl}/#organization`,
+    name: org.siteName,
+    legalName: org.legalName,
+    url: siteUrl,
+    logo: absoluteAssetUrl(org.logo),
+    image: absoluteAssetUrl(org.defaultOgImage),
+    description: org.description,
+    email: org.contactEmail,
+    telephone: org.contactPhone,
+    address: {
+      "@type": "PostalAddress",
+      ...org.address,
+    },
+    sameAs: org.sameAs,
+    areaServed: {
+      "@type": "Country",
+      name: "United States",
+    },
+  };
+
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${siteUrl}/#website`,
+    name: org.siteName,
+    url: siteUrl,
+    description: org.description,
+    publisher: {
+      "@id": `${siteUrl}/#organization`,
+    },
+    inLanguage: "en-US",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: {
+        "@type": "EntryPoint",
+        urlTemplate: `${siteUrl}/products?q={search_term_string}`,
+      },
+      "query-input": "required name=search_term_string",
+    },
+  };
+
   return (
     <html
       lang="en"
@@ -42,17 +111,11 @@ export default function RootLayout({
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
-      <head>
-        <meta
-          name="format-detection"
-          content="telephone=no, date=no, email=no, address=no"
-        />
-      </head>
-      {/* suppressHydrationWarning: browser extensions (e.g. Grammarly) inject body attrs */}
       <body
         className="min-h-full flex flex-col antialiased"
         suppressHydrationWarning
       >
+        <JsonLd data={[organizationJsonLd, websiteJsonLd]} />
         <AppProviders>{children}</AppProviders>
       </body>
     </html>

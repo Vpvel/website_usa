@@ -1,12 +1,16 @@
 import type { Metadata } from "next";
 import { getHomeContentUseCase } from "@/di/container";
 import { ShopCartView } from "@/presentation/components/shop/ShopCartView";
+import { buildManagedPageMetadata } from "@/presentation/seo/resolve-managed-seo";
 
-export const metadata: Metadata = {
-  title: "Starch Shop Cart | Angel Starch",
-  description:
-    "Review bakery modified starch cart items and request a quote for US distribution.",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return await buildManagedPageMetadata({
+  title: "Cart",
+  description: "Review starch cart items and continue to checkout.",
+  path: "/shop/cart",
+  noIndex: true,
+});
+}
 
 export default async function ShopCartPage() {
   const site = await getHomeContentUseCase.execute();

@@ -5,19 +5,24 @@ import {
   getHomeContentUseCase,
 } from "@/di/container";
 import { AboutPageView } from "@/presentation/components/about/AboutPageView";
+import { JsonLd } from "@/presentation/seo/JsonLd";
+import { buildManagedPageMetadata } from "@/presentation/seo/resolve-managed-seo";
+import { breadcrumbJsonLd } from "@/presentation/seo/structured-data";
 
-export const metadata: Metadata = {
-  title: "About Us | Angel Starch & Food Inc.",
+export async function generateMetadata(): Promise<Metadata> {
+  return await buildManagedPageMetadata({
+  title: "About Us",
   description:
-    "Sree Mangalmoorthi Starch Industries began in 1990; Angel Starch & Food Private Limited was established in 2010 in Erode, Tamil Nadu. Customer Focussed Innovation across food, textile, paper, pharma, and more.",
+    "Sree Mangalmoorthi Starch Industries began in 1990; Angel Starch & Food Private Limited was established in 2010 in Erode, Tamil Nadu. Customer-focused innovation across food, textile, paper, pharma, and more.",
+  path: "/about",
   keywords: [
     "Angel Starch About",
     "Sree Mangalmoorthi Starch Industries",
     "Erode Tamil Nadu starch manufacturer",
-    "V. P. S. Radhakrishnan",
     "APEDA starch exporter",
   ],
-};
+});
+}
 
 export default async function AboutPage() {
   const [site, about, certifications] = await Promise.all([
@@ -27,10 +32,18 @@ export default async function AboutPage() {
   ]);
 
   return (
-    <AboutPageView
-      site={site}
-      about={about}
-      certifications={certifications}
-    />
+    <>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "Home", path: "/" },
+          { name: "About", path: "/about" },
+        ])}
+      />
+      <AboutPageView
+        site={site}
+        about={about}
+        certifications={certifications}
+      />
+    </>
   );
 }

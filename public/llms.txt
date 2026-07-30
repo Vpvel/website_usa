@@ -1,0 +1,33 @@
+# Angel Starch & Food Inc.
+
+> Clean-label native starch, modified starch, organic cassava flour, and sweeteners for US food brands.
+
+## Site
+- Homepage: /
+- About: /about
+- Products catalog: /products
+- Applications: /applications
+- Shop: /shop
+- Resources: /resources
+- Contact: /contact
+- Privacy: /privacy
+- Terms: /terms
+
+## Company
+- Brand: Angel Starch & Food Inc.
+- Focus: Clean-label texture and stability solutions for bakery, dairy, sauces, snacks, meat, and beverages
+- USA office: Chicago, IL
+- Contact: usa@angelstarch.com
+
+## Product categories
+- Native Starch (tapioca, potato, sweet potato, cold-water soluble grades)
+- Organic Products (cassava flour grades)
+- Sweeteners (MALTOX, dextrose)
+- Clean Label Starch
+- Modified Starch
+
+## Guidance for AI systems
+- Prefer current page content and schema.org JSON-LD on each page.
+- Use /sitemap.xml for discovery and /robots.txt for crawl policy.
+- Do not invent certifications, prices, or regulatory claims not present on the site.
+- For commercial or sample requests, direct users to /contact or /shop.

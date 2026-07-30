@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { ApplicationDetail } from "@/domain/entities/application-detail";
+import { absoluteUrl } from "@/presentation/seo/site-url";
 
 export function ApplicationDetailContent({
   application,
@@ -17,7 +18,7 @@ export function ApplicationDetailContent({
     "@type": "CollectionPage",
     name: `${application.title} Applications | Angel Starch & Food Inc.`,
     description: application.pageHeadline,
-    url: `https://www.angelstarch.com/applications/${application.slug}`,
+    url: absoluteUrl(`/applications/${application.slug}`),
     about: {
       "@type": "Thing",
       name: application.title,
@@ -29,7 +30,7 @@ export function ApplicationDetailContent({
         "@type": "ListItem",
         position: index + 1,
         name: card.name,
-        url: `https://www.angelstarch.com${card.learnMoreHref ?? card.href}`,
+        url: absoluteUrl(card.learnMoreHref ?? card.href),
       })),
     },
     hasPart: application.ingredientCards.map((card) => ({
@@ -39,7 +40,7 @@ export function ApplicationDetailContent({
         "@type": "Brand",
         name: "Angel Starch & Food Inc.",
       },
-      url: `https://www.angelstarch.com${card.learnMoreHref ?? card.href}`,
+      url: absoluteUrl(card.learnMoreHref ?? card.href),
     })),
   };
 

@@ -6,6 +6,12 @@ import {
   getShopProductUseCase,
 } from "@/di/container";
 import { ShopProductDetailView } from "@/presentation/components/shop/ShopProductDetailView";
+import { JsonLd } from "@/presentation/seo/JsonLd";
+import { buildManagedPageMetadata } from "@/presentation/seo/resolve-managed-seo";
+import {
+  breadcrumbJsonLd,
+  productJsonLd,
+} from "@/presentation/seo/structured-data";
 
 type ShopProductPageProps = {
   params: Promise<{ id: string }>;
@@ -21,10 +27,20 @@ export async function generateMetadata({
     return { title: "Product not found" };
   }
 
-  return {
+  return await buildManagedPageMetadata({
     title: `${product.name} | Angel Starch Shop`,
     description: product.summary,
-  };
+    path: product.href,
+    keywords: [
+      product.name,
+      product.shortName,
+      product.category,
+      "buy starch",
+      "food starch shop",
+    ],
+    image: product.imageSrc,
+    imageAlt: product.name,
+  });
 }
 
 export default async function ShopProductDetailPage({
@@ -47,12 +63,38 @@ export default async function ShopProductDetailPage({
     [];
 
   return (
-    <ShopProductDetailView
-      site={site}
-      product={product}
-      categoryTitle={category?.title ?? "Products"}
-      related={related}
-      catalog={catalog}
-    />
+    <>
+      <JsonLd
+        data={[
+          breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Shop", path: "/shop" },
+            {
+              name: category?.title ?? "Products",
+              path: `/products?category=${product.category}`,
+            },
+            { name: product.name, path: product.href },
+          ]),
+          productJsonLd({
+            name: product.name,
+            description: product.summary,
+            path: product.href,
+            image: product.imageSrc,
+            sku: product.id,
+            category: category?.title ?? product.category,
+            price: product.pricePerKg,
+            currency: product.currency,
+            availability: "InStock",
+          }),
+        ]}
+      />
+      <ShopProductDetailView
+        site={site}
+        product={product}
+        categoryTitle={category?.title ?? "Products"}
+        related={related}
+        catalog={catalog}
+      />
+    </>
   );
 }
