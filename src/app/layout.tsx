@@ -5,11 +5,9 @@ import {
   Source_Sans_3,
 } from "next/font/google";
 import { AppProviders } from "@/presentation/providers/AppProviders";
+import { siteSeo } from "@/data/datasources/site-seo.local";
 import { JsonLd } from "@/presentation/seo/JsonLd";
-import {
-  buildManagedPageMetadata,
-  getManagedOrganizationFields,
-} from "@/presentation/seo/resolve-managed-seo";
+import { getManagedOrganizationFields } from "@/presentation/seo/resolve-managed-seo";
 import { absoluteAssetUrl, getSiteUrl } from "@/presentation/seo/site-url";
 import "./globals.css";
 
@@ -31,13 +29,16 @@ const body = Source_Sans_3({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const managed = await buildManagedPageMetadata({ path: "/" });
   const org = await getManagedOrganizationFields();
-  const siteUrl = getSiteUrl();
+  const siteUrl = org.fallbackSiteUrl || getSiteUrl();
 
   return {
-    metadataBase: new URL(org.fallbackSiteUrl || siteUrl),
-    ...managed,
+    metadataBase: new URL(siteUrl),
+    title: {
+      default: org.siteName === siteSeo.siteName ? siteSeo.defaultTitle : `${org.siteName} | ${org.tagline}`,
+      template: `%s | ${org.siteName}`,
+    },
+    description: org.description,
     applicationName: org.siteName,
     authors: [{ name: org.siteName }],
     creator: org.siteName,
@@ -48,6 +49,21 @@ export async function generateMetadata(): Promise<Metadata> {
       email: false,
       address: false,
       date: false,
+    },
+    openGraph: {
+      type: "website",
+      locale: siteSeo.locale,
+      url: siteUrl,
+      siteName: org.siteName,
+      title: org.siteName,
+      description: org.description,
+      images: [{ url: absoluteAssetUrl(org.defaultOgImage), alt: org.siteName }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: org.siteName,
+      description: org.description,
+      images: [absoluteAssetUrl(org.defaultOgImage)],
     },
   };
 }

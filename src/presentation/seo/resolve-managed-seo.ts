@@ -6,7 +6,7 @@ import {
   type AdminSeoContent,
   type SeoMetaPair,
 } from "@/domain/entities/seo-content";
-import { absoluteAssetUrl, absoluteUrl } from "@/presentation/seo/site-url";
+import { getSiteUrl } from "@/presentation/seo/site-url";
 
 export type ManagedPageSeoInput = {
   path: string;
@@ -91,8 +91,14 @@ export async function buildManagedPageMetadata(
   const absoluteTitle = /angel starch/i.test(title)
     ? title
     : `${title} | ${seo.siteName}`;
-  const url = absoluteUrl(canonicalPath);
-  const ogImage = absoluteAssetUrl(image);
+  const base = (seo.fallbackSiteUrl || getSiteUrl()).replace(/\/$/, "");
+  const url =
+    canonicalPath === "/"
+      ? base
+      : `${base}${canonicalPath.startsWith("/") ? canonicalPath : `/${canonicalPath}`}`;
+  const ogImage = image.startsWith("http")
+    ? image
+    : `${base}${image.startsWith("/") ? image : `/${image}`}`;
   const other = {
     ...metaPairsToOther(seo.customMeta),
     ...metaPairsToOther(override?.customMeta ?? []),
