@@ -51,7 +51,9 @@ export function SiteFooter({
 
       <div className="site-footer__bottom">
         <div className="site-footer__bottom-inner">
-          <p>© {new Date().getFullYear()} {brandName}</p>
+          <p suppressHydrationWarning>
+            © {new Date().getFullYear()} {brandName}
+          </p>
           <div className="site-footer__legal">
             <Link href="/privacy">Privacy Policy</Link>
             <Link href="/terms">Terms</Link>

@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Keep production builds green even if editors run stricter local lint rules.
+  typescript: {
+    ignoreBuildErrors: false,
+  },
 };
 
 export default nextConfig;

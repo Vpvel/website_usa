@@ -39,14 +39,20 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${fraunces.variable} ${cormorant.variable} ${body.variable} h-full`}
+      data-scroll-behavior="smooth"
+      suppressHydrationWarning
     >
       <head>
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@400&display=swap"
+        <meta
+          name="format-detection"
+          content="telephone=no, date=no, email=no, address=no"
         />
       </head>
-      <body className="min-h-full flex flex-col antialiased">
+      {/* suppressHydrationWarning: browser extensions (e.g. Grammarly) inject body attrs */}
+      <body
+        className="min-h-full flex flex-col antialiased"
+        suppressHydrationWarning
+      >
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
