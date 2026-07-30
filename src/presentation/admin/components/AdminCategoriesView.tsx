@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AdminShell } from "@/presentation/admin/components/AdminShell";
+import {
+  AdminListToolbar,
+  AdminTableEmpty,
+  AdminTableLoading,
+} from "@/presentation/admin/components/AdminListToolbar";
 import { useAdminCategoriesViewModel } from "@/presentation/admin/viewmodels/useAdminCategoriesViewModel";
 import { toKebabCase } from "@/data/datasources/admin-storage";
 
@@ -11,6 +16,37 @@ export function AdminCategoriesListView() {
 
   return (
     <AdminShell title="Categories">
+      <AdminListToolbar
+        filters={
+          <>
+            <input
+              placeholder="Search categories"
+              value={vm.search}
+              onChange={(event) => vm.setSearch(event.target.value)}
+              aria-label="Search categories"
+            />
+            <select
+              value={vm.statusFilter}
+              onChange={(event) => vm.setStatusFilter(event.target.value)}
+              aria-label="Filter by status"
+            >
+              <option value="">All statuses</option>
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+            </select>
+          </>
+        }
+        actions={
+          <Link href="/admin/categories/new" className="btn btn--primary">
+            Create category
+          </Link>
+        }
+        meta={
+          vm.loading
+            ? "Loading categories…"
+            : `${vm.categories.length} categor${vm.categories.length === 1 ? "y" : "ies"}`
+        }
+      />
       {vm.error ? <p className="admin-alert admin-alert--error">{vm.error}</p> : null}
       <div className="admin-table-wrap">
         <table className="admin-table">
@@ -18,43 +54,47 @@ export function AdminCategoriesListView() {
             <tr>
               <th>Title</th>
               <th>Slug</th>
-              <th>Order</th>
-              <th>Products</th>
-              <th>Status</th>
-              <th />
+              <th className="admin-table__col-num">Order</th>
+              <th className="admin-table__col-num">Products</th>
+              <th className="admin-table__col-status">Status</th>
+              <th className="admin-table__col-actions">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {vm.categories.map((category) => (
-              <tr key={category.id}>
-                <td>{category.title}</td>
-                <td>
-                  <code>{category.id}</code>
-                </td>
-                <td>{category.sortOrder}</td>
-                <td>{vm.counts[category.id] ?? 0}</td>
-                <td>
-                  <span
-                    className={`admin-badge ${category.isPublished ? "is-success" : "is-muted"}`}
-                  >
-                    {category.isPublished ? "Published" : "Draft"}
-                  </span>
-                </td>
-                <td className="admin-table__actions">
-                  <Link href={`/admin/categories/${category.id}`}>Edit</Link>
-                  <button type="button" onClick={() => void vm.removeCategory(category.id)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
+            {vm.loading ? (
+              <AdminTableLoading colSpan={6} />
+            ) : vm.categories.length === 0 ? (
+              <AdminTableEmpty
+                colSpan={6}
+                message="No categories match your search or filters."
+              />
+            ) : (
+              vm.categories.map((category) => (
+                <tr key={category.id}>
+                  <td>{category.title}</td>
+                  <td>
+                    <code>{category.id}</code>
+                  </td>
+                  <td>{category.sortOrder}</td>
+                  <td>{vm.counts[category.id] ?? 0}</td>
+                  <td>
+                    <span
+                      className={`admin-badge ${category.isPublished ? "is-success" : "is-muted"}`}
+                    >
+                      {category.isPublished ? "Published" : "Draft"}
+                    </span>
+                  </td>
+                  <td className="admin-table__actions">
+                    <Link href={`/admin/categories/${category.id}`}>Edit</Link>
+                    <button type="button" onClick={() => void vm.removeCategory(category.id)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
-      </div>
-      <div className="admin-form__actions">
-        <Link href="/admin/categories/new" className="btn btn--primary">
-          Create category
-        </Link>
       </div>
     </AdminShell>
   );

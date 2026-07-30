@@ -19,6 +19,7 @@ export function useAdminProductsViewModel(editId?: string) {
   const [categories, setCategories] = useState<AdminCategory[]>([]);
   const [detailsMap, setDetailsMap] = useState<Record<string, boolean>>({});
   const [categoryFilter, setCategoryFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -48,11 +49,21 @@ export function useAdminProductsViewModel(editId?: string) {
         ),
         listAdminCategoriesUseCase.execute(),
       ]);
-      const filtered = search
-        ? productList.filter((item) =>
-            item.name.toLowerCase().includes(search.toLowerCase()),
-          )
-        : productList;
+      let filtered = productList;
+      if (search.trim()) {
+        const q = search.trim().toLowerCase();
+        filtered = filtered.filter(
+          (item) =>
+            item.name.toLowerCase().includes(q) ||
+            item.shortName.toLowerCase().includes(q) ||
+            item.id.toLowerCase().includes(q),
+        );
+      }
+      if (statusFilter === "published") {
+        filtered = filtered.filter((item) => item.isPublished);
+      } else if (statusFilter === "draft") {
+        filtered = filtered.filter((item) => !item.isPublished);
+      }
       setProducts(filtered);
       setCategories(categoryList);
 
@@ -68,7 +79,7 @@ export function useAdminProductsViewModel(editId?: string) {
     } finally {
       setLoading(false);
     }
-  }, [categoryFilter, search]);
+  }, [categoryFilter, search, statusFilter]);
 
   useEffect(() => {
     void refresh();
@@ -167,12 +178,14 @@ export function useAdminProductsViewModel(editId?: string) {
     categories,
     detailsMap,
     categoryFilter,
+    statusFilter,
     search,
     loading,
     saving,
     error,
     form,
     setCategoryFilter,
+    setStatusFilter,
     setSearch,
     setForm,
     createProduct,

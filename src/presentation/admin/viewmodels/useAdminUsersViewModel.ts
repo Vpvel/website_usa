@@ -17,6 +17,7 @@ export function useAdminUsersViewModel(editId?: string) {
   const [current, setCurrent] = useState<AdminUser | null>(null);
   const [query, setQuery] = useState("");
   const [roleFilter, setRoleFilter] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -39,6 +40,12 @@ export function useAdminUsersViewModel(editId?: string) {
       const list = await listAdminUsersUseCase.execute({
         search: query || undefined,
         role: roleFilter || undefined,
+        isActive:
+          statusFilter === "active"
+            ? true
+            : statusFilter === "inactive"
+              ? false
+              : undefined,
       });
       setUsers(list);
     } catch (err) {
@@ -46,7 +53,7 @@ export function useAdminUsersViewModel(editId?: string) {
     } finally {
       setLoading(false);
     }
-  }, [query, roleFilter]);
+  }, [query, roleFilter, statusFilter]);
 
   useEffect(() => {
     void refresh();
@@ -139,6 +146,7 @@ export function useAdminUsersViewModel(editId?: string) {
     current,
     query,
     roleFilter,
+    statusFilter,
     loading,
     saving,
     error,
@@ -146,6 +154,7 @@ export function useAdminUsersViewModel(editId?: string) {
     form,
     setQuery,
     setRoleFilter,
+    setStatusFilter,
     setForm,
     createUser,
     updateUser,

@@ -17,6 +17,8 @@ import { notifyAdminContentChanged } from "@/data/datasources/admin-media.local"
 export function useAdminCategoriesViewModel(editId?: string) {
   const [categories, setCategories] = useState<AdminCategory[]>([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("");
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,7 +37,21 @@ export function useAdminCategoriesViewModel(editId?: string) {
   const refresh = useCallback(async () => {
     setLoading(true);
     try {
-      const list = await listAdminCategoriesUseCase.execute();
+      let list = await listAdminCategoriesUseCase.execute();
+      if (search.trim()) {
+        const q = search.trim().toLowerCase();
+        list = list.filter(
+          (item) =>
+            item.title.toLowerCase().includes(q) ||
+            item.id.toLowerCase().includes(q) ||
+            item.description.toLowerCase().includes(q),
+        );
+      }
+      if (statusFilter === "published") {
+        list = list.filter((item) => item.isPublished);
+      } else if (statusFilter === "draft") {
+        list = list.filter((item) => !item.isPublished);
+      }
       setCategories(list);
       const nextCounts: Record<string, number> = {};
       await Promise.all(
@@ -49,7 +65,7 @@ export function useAdminCategoriesViewModel(editId?: string) {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [search, statusFilter]);
 
   useEffect(() => {
     void refresh();
@@ -150,10 +166,14 @@ export function useAdminCategoriesViewModel(editId?: string) {
   return {
     categories,
     counts,
+    search,
+    statusFilter,
     loading,
     saving,
     error,
     form,
+    setSearch,
+    setStatusFilter,
     setForm,
     createCategory,
     updateCategory,

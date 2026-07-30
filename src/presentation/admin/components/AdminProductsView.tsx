@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AdminShell } from "@/presentation/admin/components/AdminShell";
 import { ImagePathField } from "@/presentation/admin/components/ImagePathField";
+import {
+  AdminListToolbar,
+  AdminTableEmpty,
+  AdminTableLoading,
+} from "@/presentation/admin/components/AdminListToolbar";
 import { useAdminProductsViewModel } from "@/presentation/admin/viewmodels/useAdminProductsViewModel";
 import { toKebabCase } from "@/data/datasources/admin-storage";
 
@@ -12,24 +17,49 @@ export function AdminProductsListView() {
 
   return (
     <AdminShell title="Products">
-      <div className="admin-toolbar">
-        <input
-          placeholder="Search products"
-          value={vm.search}
-          onChange={(event) => vm.setSearch(event.target.value)}
-        />
-        <select
-          value={vm.categoryFilter}
-          onChange={(event) => vm.setCategoryFilter(event.target.value)}
-        >
-          <option value="">All categories</option>
-          {vm.categories.map((category) => (
-            <option key={category.id} value={category.id}>
-              {category.title}
-            </option>
-          ))}
-        </select>
-      </div>
+      <AdminListToolbar
+        filters={
+          <>
+            <input
+              placeholder="Search products"
+              value={vm.search}
+              onChange={(event) => vm.setSearch(event.target.value)}
+              aria-label="Search products"
+            />
+            <select
+              value={vm.categoryFilter}
+              onChange={(event) => vm.setCategoryFilter(event.target.value)}
+              aria-label="Filter by category"
+            >
+              <option value="">All categories</option>
+              {vm.categories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.title}
+                </option>
+              ))}
+            </select>
+            <select
+              value={vm.statusFilter}
+              onChange={(event) => vm.setStatusFilter(event.target.value)}
+              aria-label="Filter by status"
+            >
+              <option value="">All statuses</option>
+              <option value="published">Published</option>
+              <option value="draft">Draft</option>
+            </select>
+          </>
+        }
+        actions={
+          <Link href="/admin/products/new" className="btn btn--primary">
+            Create product
+          </Link>
+        }
+        meta={
+          vm.loading
+            ? "Loading products…"
+            : `${vm.products.length} product${vm.products.length === 1 ? "" : "s"}`
+        }
+      />
       {vm.error ? <p className="admin-alert admin-alert--error">{vm.error}</p> : null}
       <div className="admin-table-wrap">
         <table className="admin-table">
@@ -37,59 +67,63 @@ export function AdminProductsListView() {
             <tr>
               <th>Product</th>
               <th>Category</th>
-              <th>Price / kg</th>
-              <th>MOQ</th>
-              <th>Status</th>
-              <th>Details</th>
-              <th />
+              <th className="admin-table__col-num">Price / kg</th>
+              <th className="admin-table__col-num">MOQ</th>
+              <th className="admin-table__col-status">Status</th>
+              <th className="admin-table__col-status">Details</th>
+              <th className="admin-table__col-actions">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {vm.products.map((product) => (
-              <tr key={product.id}>
-                <td>
-                  <div className="admin-product-cell">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={product.imageSrc} alt="" />
-                    <div>
-                      <strong>{product.name}</strong>
-                      <small>{product.shortName}</small>
+            {vm.loading ? (
+              <AdminTableLoading colSpan={7} />
+            ) : vm.products.length === 0 ? (
+              <AdminTableEmpty
+                colSpan={7}
+                message="No products match your search or filters."
+              />
+            ) : (
+              vm.products.map((product) => (
+                <tr key={product.id}>
+                  <td>
+                    <div className="admin-product-cell">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={product.imageSrc} alt="" />
+                      <div>
+                        <strong>{product.name}</strong>
+                        <small>{product.shortName}</small>
+                      </div>
                     </div>
-                  </div>
-                </td>
-                <td>{product.categoryId}</td>
-                <td>${product.pricePerKg.toFixed(2)}</td>
-                <td>{product.minOrderKg} kg</td>
-                <td>
-                  <span
-                    className={`admin-badge ${product.isPublished ? "is-success" : "is-muted"}`}
-                  >
-                    {product.isPublished ? "Published" : "Draft"}
-                  </span>
-                </td>
-                <td>
-                  <span
-                    className={`admin-badge ${vm.detailsMap[product.id] ? "is-success" : "is-muted"}`}
-                  >
-                    {vm.detailsMap[product.id] ? "Ready" : "Missing"}
-                  </span>
-                </td>
-                <td className="admin-table__actions">
-                  <Link href={`/admin/products/${product.id}`}>Edit</Link>
-                  <Link href={`/admin/products/${product.id}/details`}>Details</Link>
-                  <button type="button" onClick={() => void vm.removeProduct(product.id)}>
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
+                  </td>
+                  <td>{product.categoryId}</td>
+                  <td>${product.pricePerKg.toFixed(2)}</td>
+                  <td>{product.minOrderKg} kg</td>
+                  <td>
+                    <span
+                      className={`admin-badge ${product.isPublished ? "is-success" : "is-muted"}`}
+                    >
+                      {product.isPublished ? "Published" : "Draft"}
+                    </span>
+                  </td>
+                  <td>
+                    <span
+                      className={`admin-badge ${vm.detailsMap[product.id] ? "is-success" : "is-muted"}`}
+                    >
+                      {vm.detailsMap[product.id] ? "Ready" : "Missing"}
+                    </span>
+                  </td>
+                  <td className="admin-table__actions">
+                    <Link href={`/admin/products/${product.id}`}>Edit</Link>
+                    <Link href={`/admin/products/${product.id}/details`}>Details</Link>
+                    <button type="button" onClick={() => void vm.removeProduct(product.id)}>
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
-      </div>
-      <div className="admin-form__actions">
-        <Link href="/admin/products/new" className="btn btn--primary">
-          Create product
-        </Link>
       </div>
     </AdminShell>
   );

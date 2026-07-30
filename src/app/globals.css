@@ -5588,11 +5588,40 @@ img {
   gap: 0.75rem;
 }
 
+.admin-list-header {
+  margin-bottom: 1rem;
+}
+
 .admin-toolbar {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem 1rem;
+}
+
+.admin-toolbar__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
   gap: 0.75rem;
-  margin-bottom: 1rem;
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.admin-toolbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.admin-toolbar__meta {
+  margin-top: 0.65rem;
+  color: var(--muted);
+  font-size: 0.88rem;
 }
 
 .admin-toolbar input,
@@ -5609,11 +5638,35 @@ img {
   background: #fff;
   color: var(--ink);
   font: inherit;
+  line-height: 1.25;
 }
 
-.admin-toolbar input,
-.admin-toolbar select {
-  max-width: 280px;
+.admin-toolbar__filters input,
+.admin-toolbar__filters select {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  height: 2.75rem;
+  box-sizing: border-box;
+}
+
+.admin-toolbar__filters input {
+  flex: 1 1 220px;
+  min-width: 180px;
+  max-width: 320px;
+}
+
+.admin-toolbar__filters select {
+  flex: 0 1 180px;
+  min-width: 140px;
+}
+
+.admin-toolbar__actions .btn {
+  height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .admin-form {
@@ -5715,10 +5768,38 @@ img {
   background: #f8fbf9;
 }
 
+.admin-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-table__empty {
+  text-align: center !important;
+  color: var(--muted);
+  padding: 2rem 1rem !important;
+}
+
+.admin-table__col-actions {
+  width: 11rem;
+}
+
+.admin-table__col-status {
+  width: 7.5rem;
+}
+
+.admin-table__col-role {
+  width: 8.5rem;
+}
+
+.admin-table__col-num {
+  width: 6.5rem;
+}
+
 .admin-table__actions {
   display: flex;
   gap: 0.65rem;
   flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 .admin-table__actions button,
@@ -5873,6 +5954,29 @@ img {
   .admin-spec-row,
   .admin-inline-fields {
     grid-template-columns: 1fr;
+  }
+
+  .admin-toolbar {
+    align-items: stretch;
+  }
+
+  .admin-toolbar__filters {
+    flex: 1 1 100%;
+  }
+
+  .admin-toolbar__filters input,
+  .admin-toolbar__filters select {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .admin-toolbar__actions {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .admin-toolbar__actions .btn {
+    width: 100%;
   }
 }
 

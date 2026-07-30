@@ -77,9 +77,6 @@ function CategoryProductCard({
         >
           {isAdded ? "Added" : "Add to cart"}
         </button>
-        <Link href={`/shop/product/${product.id}`} className="shop-cat-card__details">
-          Details
-        </Link>
       </div>
     </article>
   );

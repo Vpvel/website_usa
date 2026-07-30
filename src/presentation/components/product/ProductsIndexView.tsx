@@ -95,9 +95,6 @@ function ProductCard({
           >
             {isAdded ? "Added" : "Add to cart"}
           </button>
-          <Link href={`/shop/product/${product.id}`} className="fk-card__link">
-            Details
-          </Link>
         </div>
       </div>
     </article>

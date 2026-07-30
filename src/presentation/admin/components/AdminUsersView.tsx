@@ -3,6 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AdminShell } from "@/presentation/admin/components/AdminShell";
+import {
+  AdminListToolbar,
+  AdminTableEmpty,
+  AdminTableLoading,
+} from "@/presentation/admin/components/AdminListToolbar";
 import { useAdminUsersViewModel } from "@/presentation/admin/viewmodels/useAdminUsersViewModel";
 import type { AdminRole } from "@/domain/entities/admin";
 
@@ -17,22 +22,47 @@ export function AdminUsersListView() {
 
   return (
     <AdminShell title="Users">
-      <div className="admin-toolbar">
-        <input
-          placeholder="Search name or email"
-          value={vm.query}
-          onChange={(event) => vm.setQuery(event.target.value)}
-        />
-        <select
-          value={vm.roleFilter}
-          onChange={(event) => vm.setRoleFilter(event.target.value)}
-        >
-          <option value="">All roles</option>
-          <option value="super_admin">Super Admin</option>
-          <option value="admin">Admin</option>
-          <option value="customer">Customer</option>
-        </select>
-      </div>
+      <AdminListToolbar
+        filters={
+          <>
+            <input
+              placeholder="Search name or email"
+              value={vm.query}
+              onChange={(event) => vm.setQuery(event.target.value)}
+              aria-label="Search users"
+            />
+            <select
+              value={vm.roleFilter}
+              onChange={(event) => vm.setRoleFilter(event.target.value)}
+              aria-label="Filter by role"
+            >
+              <option value="">All roles</option>
+              <option value="super_admin">Super Admin</option>
+              <option value="admin">Admin</option>
+              <option value="customer">Customer</option>
+            </select>
+            <select
+              value={vm.statusFilter}
+              onChange={(event) => vm.setStatusFilter(event.target.value)}
+              aria-label="Filter by status"
+            >
+              <option value="">All statuses</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </>
+        }
+        actions={
+          <Link href="/admin/users/new" className="btn btn--primary">
+            Create user
+          </Link>
+        }
+        meta={
+          vm.loading
+            ? "Loading users…"
+            : `${vm.users.length} user${vm.users.length === 1 ? "" : "s"}`
+        }
+      />
 
       {vm.error ? <p className="admin-alert admin-alert--error">{vm.error}</p> : null}
 
@@ -43,47 +73,48 @@ export function AdminUsersListView() {
               <th>Name</th>
               <th>Email</th>
               <th>Company</th>
-              <th>Role</th>
-              <th>Status</th>
-              <th />
+              <th className="admin-table__col-role">Role</th>
+              <th className="admin-table__col-status">Status</th>
+              <th className="admin-table__col-actions">Actions</th>
             </tr>
           </thead>
           <tbody>
-            {vm.users.map((user) => (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.company || "—"}</td>
-                <td>
-                  <span className="admin-badge">{roleBadge(user.role)}</span>
-                </td>
-                <td>
-                  <span
-                    className={`admin-badge ${user.isActive ? "is-success" : "is-muted"}`}
-                  >
-                    {user.isActive ? "Active" : "Inactive"}
-                  </span>
-                </td>
-                <td className="admin-table__actions">
-                  <Link href={`/admin/users/${user.id}`}>Edit</Link>
-                  {user.isActive ? (
-                    <button
-                      type="button"
-                      onClick={() => void vm.deactivateUser(user.id)}
+            {vm.loading ? (
+              <AdminTableLoading colSpan={6} />
+            ) : vm.users.length === 0 ? (
+              <AdminTableEmpty colSpan={6} message="No users match your search or filters." />
+            ) : (
+              vm.users.map((user) => (
+                <tr key={user.id}>
+                  <td>{user.name}</td>
+                  <td>{user.email}</td>
+                  <td>{user.company || "—"}</td>
+                  <td>
+                    <span className="admin-badge">{roleBadge(user.role)}</span>
+                  </td>
+                  <td>
+                    <span
+                      className={`admin-badge ${user.isActive ? "is-success" : "is-muted"}`}
                     >
-                      Deactivate
-                    </button>
-                  ) : null}
-                </td>
-              </tr>
-            ))}
+                      {user.isActive ? "Active" : "Inactive"}
+                    </span>
+                  </td>
+                  <td className="admin-table__actions">
+                    <Link href={`/admin/users/${user.id}`}>Edit</Link>
+                    {user.isActive ? (
+                      <button
+                        type="button"
+                        onClick={() => void vm.deactivateUser(user.id)}
+                      >
+                        Deactivate
+                      </button>
+                    ) : null}
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
-      </div>
-      <div className="admin-form__actions">
-        <Link href="/admin/users/new" className="btn btn--primary">
-          Create user
-        </Link>
       </div>
     </AdminShell>
   );
